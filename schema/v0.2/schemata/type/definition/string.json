@@ -3,15 +3,8 @@
   "title": "String Type Definition",
   "type": "object",
   "properties": {
-    "name": {
-      "$ref": "../../common/type-name.json"
-    },
-    "base": {
-      "type": "string",
-      "enum": [
-        "string"
-      ]
-    },
+    "name": { "$ref": "../../common/type-name.json" },
+    "base": { "enum": [ "string" ] },
     "minLength": {
       "type": "integer",
       "minimum": 0
@@ -24,9 +17,7 @@
       "type": "string",
       "format": "regex"
     },
-    "example": {
-      "type": "string"
-    },
+    "example": { "type": "string" },
     "examples": {
       "type": "object",
       "additionalProperties": {

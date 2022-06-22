@@ -5,12 +5,12 @@
   "description": "A simple HTTP route whose path does not contain any URI parameters.",
   "type": "object",
   "properties": {
-    "delete": { "$ref": "method-without-body.json" },
-    "get":    { "$ref": "method-without-body.json" },
-    "head":   { "$ref": "method-without-body.json" },
-    "patch":  { "$ref": "method-with-body.json" },
-    "post":   { "$ref": "method-with-body.json" },
-    "put":    { "$ref": "method-with-body.json" }
+    "delete": { "$ref": "method/method-without-body.json" },
+    "get":    { "$ref": "method/method-without-body.json" },
+    "head":   { "$ref": "method/method-without-body.json" },
+    "patch":  { "$ref": "method/method-with-body.json" },
+    "post":   { "$ref": "method/method-with-body.json" },
+    "put":    { "$ref": "method/method-with-body.json" }
   },
   "minProperties": 1,
   "additionalProperties": false

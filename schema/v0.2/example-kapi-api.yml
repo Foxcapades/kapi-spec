@@ -75,21 +75,69 @@ routes:
               value:
                 type: JobResponse
         404:
+          summary: Not Found
+          content:
+            application/json:
+              value:
+                type: NotFound
+        500:
+          summary: Internal Server Error
+          content:
+            application/json:
+              value:
+                type: ServerError
 
 
+  /jobs/{job-id}/files:
+    uri:
+      - name: job-id
+        value:
+          type: JobID
+    get:
+      summary: List Job Files
+      description: Lists the files available for a target job.
+      responses:
+        200:
+          summary: Success
+          content:
+            application/json:
+              value:
+                type: list
+                values:
+                  type: string
+        404:
+          summary: Not Found
+          description: Requested job was not found.
+          content:
+            application/json:
+              value:
+                type: NotFound
+        500:
+          summary: Internal Server Error
+          content:
+            application/json:
+              value:
+                type: ServerError
 
 segments:
   types:
+    - name: NotFound
+      base: object
+      properties:
+        code:
+          type: integer
+          default: 404
+        message:
+          type: string
+
     - name: ServerError
       base: object
       properties:
         code:
           type: integer
           default: 500
-          required: true
         message:
           type: string
-          required: true
 
     - name: ReverseRequest
       base: object

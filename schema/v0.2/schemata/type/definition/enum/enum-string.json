@@ -2,28 +2,22 @@
   "$schema": "https://json-schema.org/draft-07/schema",
   "title": "String Enum",
   "description": "Definition of an enum type whose values are backed by a string property.",
-  "allOf": [
-    { "$ref": "enum-base.json" },
-    {
+  "type": "object",
+  "properties": {
+    "name": { "$ref": "../../../common/type-name.json" },
+    "base": { "enum": [ "enum" ] },
+    "valueType": { "enum": [ "string" ] },
+    "values": {
       "type": "object",
-      "properties": {
-        "valueType": { "enum": [ "string" ] },
-        "values": {
-          "type": "object",
-          "patternProperties": {
-            "^\\w[\\w\\d]*$": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "valueType",
-            "values"
-          ],
-          "additionalProperties": false
-        }
-      }
+      "patternProperties": { "^\\w[\\w\\d]*$": { "type": "string" } },
+      "additionalProperties": false
     }
+  },
+  "required": [
+    "valueType",
+    "values"
   ],
+  "additionalProperties": false,
   "examples": [
     {
       "name": "MyEnum",
