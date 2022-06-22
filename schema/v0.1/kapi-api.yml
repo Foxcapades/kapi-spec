@@ -1,0 +1,674 @@
+$schema: http://json-schema.org/draft-07/schema
+$id: http://kapi.foxcapades.io/schema/api#
+title: KAPI Root API Definition
+
+definitions:
+
+  ###########################################################################
+  #                                                                         #
+  # Document Definitions                                                    #
+  #                                                                         #
+  ###########################################################################
+
+  api:
+    type: object
+    properties:
+      kapi:
+        $ref: "#/definitions/versionString"
+      docType:
+        title: Document Fragment Type
+        type: string
+        enum: [ api ]
+        default: api
+      imports:
+        $ref: "#/definitions/imports"
+      info:
+        $ref: "#/definitions/apiInfo"
+      routes:
+        $ref: "#/definitions/routes"
+      types:
+        $ref: "#/definitions/"
+
+    additionalProperties: false
+    required:
+      - kapi
+      - info
+
+  library:
+    type: object
+    properties:
+      docType:
+        title: Document Fragment Type
+        type: string
+        enum: [ library ]
+      imports:
+        $ref: "#/definitions/imports"
+      types:
+        $ref: "#/definitions/"
+    required:
+      - docType
+
+
+  ###########################################################################
+  #                                                                         #
+  # Document Component Definitions                                          #
+  #                                                                         #
+  ###########################################################################
+
+  apiInfo:
+    type: object
+    properties:
+      title:
+        type: string
+      summary:
+        type: string
+      description:
+        type: string
+      version:
+        type: [ number, string ]
+    required:
+      - title
+      - version
+
+  imports:
+    type: object
+    patternProperties:
+      "^[a-zA-Z][\d\w\-]*$":
+        type: string
+
+  types:
+    title: Type Definitions
+    type: array
+    items:
+      oneOf:
+        - $ref: "#/definitions/anyType"
+        - $ref: "#/definitions/arrayType"
+        - $ref: "#/definitions/binaryType"
+        - $ref: "#/definitions/booleanType"
+        - $ref: "#/definitions/decimalType"
+        - $ref: "#/definitions/integerType"
+        - $ref: "#/definitions/listType"
+        - $ref: "#/definitions/mapType"
+        - $ref: "#/definitions/objectType"
+        - $ref: "#/definitions/setType"
+        - $ref: "#/definitions/stringType"
+
+  # region Routes
+
+  routes:
+    type: object
+    patternProperties:
+      "^(?:/[\d\w\-]+)+$":
+        $ref: "#/definitions/route"
+      "^(?:/(?:[\d\w\-]+|\{[\d\w\-]+\}))+$":
+        $ref: "#/definitions/parameterizedRoute"
+    additionalProperties: false
+
+  route:
+    type: object
+    properties:
+      queryParameters:
+        $ref: "#/definitions/queryParameters"
+      delete:
+        $ref: "#/definitions/method"
+      get:
+        $ref: "#/definitions/method"
+      head:
+        $ref:
+      patch:
+        $ref: "#/definitions/method"
+      post:
+        $ref: "#/definitions/method"
+      put:
+        $ref: "#/definitions/method"
+
+  parameterizedRoute:
+    allOf:
+      - $ref: "#/definitions/route"
+      - type: object
+        properties:
+          uriParameters:
+            $ref: "#/definitions/uriParameters"
+        required:
+          - uriParameters
+
+  # endregion Routes
+
+  #
+  # Route Components
+  #
+
+  # region Method
+
+  methodBase:
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+      responses:
+        $ref: "#/definitions/responses"
+    required:
+      - responses
+
+  method:
+    allOf:
+      - $ref: "#/definitions/methodBase"
+      - type: object
+        properties:
+          request:
+            $ref: "#/definitions/request"
+
+  methodWithBody:
+    allOf:
+      - $ref: "#/definitions/methodBase"
+      - type: object
+        properties:
+          request:
+            $ref: "#/definitions/requestWithBody"
+        required:
+          - request
+
+  # endregion Method
+
+  # region Request
+
+  request:
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+      headers:
+        $ref: "#/definitions/headers"
+
+  requestWithBody:
+    allOf:
+      - $ref: "#/definitions/request"
+      - type: object
+        properties:
+          body:
+            $ref: "#/definitions/typeReference"
+        required:
+          - body
+
+  # endregion Request
+
+  # region Responses
+
+  responses:
+    type: object
+    patternProperties:
+      ^\d+$:
+        $ref: "#/definitions/responses"
+    additionalProperties: false
+
+  response:
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+      headers:
+        $ref: "#/definitions/headers"
+      body:
+        $ref: "#/definitions/mediaTypeMap"
+
+  # endregion Responses
+
+  mediaTypeMap:
+    type: object
+    additionalProperties:
+      $ref: "#/definitions/typeReference"
+
+  # region Headers
+
+  headers:
+    type: object
+    patternProperties:
+      "^([\w\d\-]+)$":
+        $ref: "#/definitions/header"
+
+  header:
+    type: object
+    properties:
+      name:
+        type: string
+        pattern: "^([\w\d\-]+)$"
+      description:
+        type: string
+      type:
+        $ref: "#/definitions/typeReference"
+    required:
+      - name
+      - type
+
+  # endregion Headers
+
+  # region Query Parameters
+
+  queryParameters:
+    type: object
+    patternProperties:
+      "^([\w\d\-](?:\[[\w\d\-]\])?)$":
+        $ref: "#/definitions/queryParameter"
+
+  queryParameter:
+    type: object
+    properties:
+      name:
+        type: string
+        pattern: ^([\w\d\-](?:\[[\w\d\-]\])?)$
+      description:
+        type: string
+      type:
+        $ref: "#/definitions/typeReference"
+    required:
+      - name
+      - type
+
+  # endregion Query Parameters
+
+  # region URI Parameters
+
+  uriParameters:
+    type: object
+    patternProperties:
+      "^([\w\d\-]+)$":
+        $ref: "#/definitions/uriParameter"
+
+  uriParameter:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      type:
+        $ref: "#/definitions/typeReference"
+    required:
+      - name
+      - type
+
+  # endregion URI Parameters
+
+
+  ###########################################################################
+  #                                                                         #
+  # Special Fields                                                          #
+  #                                                                         #
+  ###########################################################################
+
+  typeName:
+    title: Type Name
+    description: |
+      Name of a defined type.
+
+      This value is used both for referencing the type within KAPI schemata and
+      for declaring names of types in source code generated from the KAPI
+      schema.
+      
+      Type names must start with a letter and can then be followed by letters,
+      numbers, or underscores.
+    type: string
+    pattern: ^[a-zA-Z][\w\d]*$
+    minLength: 1
+    examples:
+      - MyType
+      - My_Other_Type
+      - MyTypeWithNumber1
+
+  versionString:
+    title: Version
+    description: Simplified SemVer version string.
+    type: string
+    minLength: 5
+    pattern: ^\d+\.\d+\.\d+$
+    examples:
+      - 0.1.0
+
+  builtInType:
+    title: Built-In Type
+    type: string
+    enum:
+      - any
+      - array
+      - binary
+      - boolean
+      - decimal
+      - integer
+      - list
+      - map
+      - object
+      - set
+      - string
+
+  typeReference:
+    title: Type Reference
+    description: Reference to either a built-in or custom defined type.
+    oneOf:
+      - $ref: "#/definitions/builtInType"
+      - $ref: "#/definitions/typeName"
+
+
+  ###########################################################################
+  #                                                                         #
+  # Type Definition Traits                                                  #
+  #                                                                         #
+  ###########################################################################
+
+  traitSized:
+    type: object
+    properties:
+      minSize:
+        type: integer
+        minimum: 0
+        default: 0
+      maxSize:
+        type: integer
+        minimum: 0
+
+  ###########################################################################
+  #                                                                         #
+  # Type Definition Bases                                                   #
+  #                                                                         #
+  # Base property definitions common to multiple KAPI types.                #
+  #                                                                         #
+  ###########################################################################
+
+  typeDefinition:
+    title: Type Definition Base
+    description: Defines properties common to all type definitions.
+    type: object
+    properties:
+      name:
+        $ref: "#/definitions/typeName"
+      description:
+        title: Type Description
+        description: |
+          Human readable description of the defined type.
+        type: string
+    required:
+      - name
+
+  collectionType:
+    title: Collection Type Definition Base
+    description: Defines properties common to all collection type definitions.
+    allOf:
+      - $ref: "#/definitions/traitSized"
+      - type: object
+        properties:
+          items:
+            type: string
+            default: any
+          example:
+            type: array
+          examples:
+            type: object
+            additionalProperties:
+              type: array
+
+
+  ###########################################################################
+  #                                                                         #
+  # Type Definitions                                                        #
+  #                                                                         #
+  # Definitions of KAPI type declarations                                   #
+  #                                                                         #
+  ###########################################################################
+
+  anyType:
+    title: '"Any type" type declaration.'
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - any
+        required:
+          - type
+
+  arrayType:
+    title: Array Type Declaration
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - $ref: "#/definitions/collectionType"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - array
+        required:
+          - type
+
+  binaryType:
+    title: Binary Type Declaration
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - binary
+          format:
+            type: string
+            enum:
+              - array
+              - stream
+        required:
+          - type
+
+  booleanType:
+    title: Boolean Type Declaration
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - boolean
+        required:
+          - type
+
+
+  decimalType:
+    title: Decimal Type Declaration
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - decimal
+          inclusiveMinimum:
+            type: number
+          inclusiveMaximum:
+            type: number
+          exclusiveMinimum:
+            type: number
+          exclusiveMaximum:
+            type: number
+          format:
+            type: string
+            enum:
+              - float32
+              - float64
+              - big
+            default: float64
+        required:
+          - type
+
+  integerType:
+    title: Integer Type Declaration
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - integer
+          inclusiveMinimum:
+            type: integer
+          inclusiveMaximum:
+            type: integer
+          exclusiveMinimum:
+            type: integer
+          exclusiveMaximum:
+            type: integer
+          format:
+            type: string
+            enum:
+              - int8
+              - int16
+              - int32
+              - int64
+              - uint8
+              - uint16
+              - uint32
+              - uint64
+              - big
+            default: int32
+        required:
+          - type
+
+  listType:
+    title: List Type Declaration
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - $ref: '#/definitions/collectionType'
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - list
+        required:
+          - type
+
+  mapType:
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - $ref: "#/definitions/traitSized"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - map
+          keys:
+            $ref: "#/definitions/typeReference"
+          items:
+            $ref: "#/definitions/typeReference"
+        required:
+          - type
+          - keys
+          - items
+
+  objectType:
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - object
+          name:
+            $ref: "#/definitions/typeName"
+          properties:
+            type: object
+            patternProperties:
+              "^[a-zA-Z][\d\w]+$":
+                title: Type Name Reference
+                description: Name of a declared or built-in type.
+                $ref: "#/definitions/typeReference"
+            additionalProperties: false
+        required:
+          - type
+
+  setType:
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - $ref: "#/definitions/collectionType"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - set
+        required:
+          - type
+
+  stringType:
+    allOf:
+      - $ref: "#/definitions/typeDefinition"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - string
+          maxLength:
+            type: integer
+          minLength:
+            type: integer
+            minimum: 0
+          pattern:
+            type: string
+            format: regex
+        required:
+          - type
+
+type: object
+properties:
+  kapi:
+    $ref: "#/definitions/versionString"
+
+  info:
+    type: object
+    properties:
+      title:
+        type: string
+      summary:
+        type: string
+      description:
+        type: string
+      version:
+        type: [ string, number ]
+    required:
+      - title
+      - version
+
+  routes:
+
+
+  types:
+    type: array
+    items:
+      oneOf:
+        - $ref: "#/definitions/anyType"
+        - $ref: "#/definitions/arrayType"
+        - $ref: "#/definitions/binaryType"
+        - $ref: "#/definitions/booleanType"
+        - $ref: "#/definitions/decimalType"
+        - $ref: "#/definitions/integerType"
+        - $ref: "#/definitions/listType"
+        - $ref: "#/definitions/mapType"
+        - $ref: "#/definitions/objectType"
+        - $ref: "#/definitions/setType"
+        - $ref: "#/definitions/stringType"
+
+
+required:
+  - kapi
+  - types

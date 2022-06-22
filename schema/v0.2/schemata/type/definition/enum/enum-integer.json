@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Integer Enum",
+  "description": "Definition of an enum type whose values are backed by a integer property.",
+  "allOf": [
+    { "$ref": "enum-base.json" },
+    {
+      "type": "object",
+      "properties": {
+        "valueType": { "enum": [ "integer" ] },
+        "valueFormat": { "$ref": "../../integer-format.json" },
+        "values": {
+          "type": "object",
+          "patternProperties": {
+            "^\\w[\\w\\d]*$": { "type": "integer" }
+          },
+          "required": [
+            "valueType",
+            "values"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "name": "MyEnum",
+      "base": "enum",
+      "valueType": "integer",
+      "values": {
+        "MyEnumValue1": 31,
+        "MyEnumValue2": 52,
+        "MyEnumValue3": 73
+      }
+    },
+    {
+      "name": "MyEnum",
+      "base": "enum",
+      "valueType": "integer",
+      "valueFormat": "uint32",
+      "values": {
+        "MyEnumValue1": 23,
+        "MyEnumValue2": 55,
+        "MyEnumValue3": 69
+      }
+    }
+  ]
+}

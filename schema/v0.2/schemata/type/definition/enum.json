@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Enum Type Definition",
+  "oneOf": [
+    { "$ref": "enum/enum-boolean.json" },
+    { "$ref": "enum/enum-decimal.json" },
+    { "$ref": "enum/enum-integer.json" },
+    { "$ref": "enum/enum-none.json" },
+    { "$ref": "enum/enum-string.json" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Method with Request Body",
+  "type": "object",
+  "properties": {
+    "summary":     { "type": "string" },
+    "description": { "type": "string" },
+    "query":       { "$ref": "../query-map.json" },
+    "request":     { "$ref": "../request/request-with-body.json" },
+    "responses":   { "$ref": "../response/response-map.json" }
+  },
+  "required": [
+    "request",
+    "responses"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "https://kapi.foxcapades.io/v0.2/schemata/segments/route-non-parameterized",
+  "title": "Non-Parameterized Route",
+  "description": "A simple HTTP route whose path does not contain any URI parameters.",
+  "type": "object",
+  "properties": {
+    "uri": {
+      "title": "URI Variable Definitions",
+      "type": "array",
+      "items": {
+        "$ref": "./uri-variable-definition.json"
+      }
+    },
+    "delete": { "$ref": "method-without-body.json" },
+    "get":    { "$ref": "method-without-body.json" },
+    "head":   { "$ref": "method-without-body.json" },
+    "patch":  { "$ref": "method-with-body.json" },
+    "post":   { "$ref": "method-with-body.json" },
+    "put":    { "$ref": "method-with-body.json" }
+  },
+  "required": [
+    "uri"
+  ],
+  "minProperties": 2,
+  "additionalProperties": false
+}

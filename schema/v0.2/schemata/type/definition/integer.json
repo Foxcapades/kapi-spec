@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Integer Type Definition",
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "../../common/type-name.json"
+    },
+    "base": {
+      "type": "string",
+      "enum": [
+        "integer"
+      ]
+    },
+    "exclusiveMinimum": {
+      "type": "integer"
+    },
+    "exclusiveMaximum": {
+      "type": "integer"
+    },
+    "inclusiveMinimum": {
+      "type": "integer"
+    },
+    "inclusiveMaximum": {
+      "type": "integer"
+    },
+    "example": {
+      "type": "integer"
+    },
+    "examples": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "base"
+  ],
+  "additionalProperties": false
+}

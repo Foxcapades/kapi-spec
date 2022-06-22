@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "oneOf": [
+    { "$ref": "definition/boolean.json" },
+    { "$ref": "definition/custom.json" },
+    { "$ref": "definition/decimal.json" },
+    { "$ref": "definition/enum.json" },
+    { "$ref": "definition/integer.json" },
+    { "$ref": "definition/string.json" }
+  ]
+}

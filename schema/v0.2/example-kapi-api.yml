@@ -1,0 +1,129 @@
+kapi: 0.2.0
+
+info:
+  title: Example API
+  version: 1.0.0
+
+routes:
+
+  /countArray:
+    post:
+      request:
+        content:
+          application/json:
+            value:
+              type: list
+              values:
+                type: string
+      responses:
+        200:
+
+  /reverse:
+    post:
+      request:
+        content:
+          application/json:
+            value:
+              type: ReverseRequest
+      responses:
+        200:
+          summary: Jub Submitted Successfully
+          content:
+            application/json:
+              value:
+                type: JobResponse
+
+  /jobs:
+    get:
+      query:
+        per-page:
+          type: integer
+          format: uint32
+        page-number:
+          type: integer
+          format: uint32
+      responses:
+        200:
+          summary: Job List
+          content:
+            application/json:
+              value:
+                type: list
+                values:
+                  type: JobResponse
+        500:
+          summary: Internal Server Error
+          content:
+            application/json:
+              value:
+                type: ServerError
+
+
+  /jobs/{job-id}:
+    uri:
+      - name: job-id
+        value:
+          type: JobID
+    get:
+      summary: Lookup a job
+      description: Lookup a job by ID.
+      responses:
+        200:
+          summary: Success
+          content:
+            application/json:
+              value:
+                type: JobResponse
+        404:
+
+
+
+segments:
+  types:
+    - name: ServerError
+      base: object
+      properties:
+        code:
+          type: integer
+          default: 500
+          required: true
+        message:
+          type: string
+          required: true
+
+    - name: ReverseRequest
+      base: object
+      properties:
+        input:
+          type: string
+          required: true
+
+    - name: JobID
+      base: string
+      pattern: ^[\da-fA-F]{32}$
+      minLength: 32
+      maxLength: 32
+
+    - name: JobResponse
+      base: object
+      properties:
+        jobId:
+          type: JobID
+          required: true
+        status:
+          type: JobStatus
+          required: true
+        queuePosition:
+          type: integer
+          format: uint32
+          required: false
+
+    - name: JobStatus
+      base: enum
+      valueType: string
+      values:
+        Queued: queued
+        InProgress: in-progress
+        Complete: complete
+        Failed: failed
+        Expired: expired

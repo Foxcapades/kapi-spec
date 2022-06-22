@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "type": "object",
+  "properties": {
+    "application/gzip": {
+      "$ref": "response-content.json"
+    },
+    "application/json": {
+      "$ref": "response-content.json"
+    },
+    "application/ld+json": {
+      "$ref": "response-content.json"
+    },
+    "application/octet-stream": {
+      "$ref": "response-content.json"
+    },
+    "application/xml": {
+      "$ref": "response-content.json"
+    },
+    "text/csv": {
+      "$ref": "response-content.json"
+    },
+    "text/html": {
+      "$ref": "response-content.json"
+    },
+    "text/plain": {
+      "$ref": "response-content.json"
+    }
+  },
+  "patternProperties": {
+    "^[a-z]+/[\\w\\-\\d.+]+$": {
+      "$ref": "response-content.json"
+    }
+  },
+  "minProperties": 1,
+  "additionalProperties": false
+}
