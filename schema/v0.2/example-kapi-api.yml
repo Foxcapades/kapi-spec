@@ -103,9 +103,12 @@ routes:
           content:
             application/json:
               value:
-                type: list
-                values:
+                type: map
+                keys:
                   type: string
+                values:
+                  type: FileInfo
+
         404:
           summary: Not Found
           description: Requested job was not found.
@@ -146,6 +149,13 @@ segments:
         input:
           type: string
           required: true
+
+    - name: FileInfo
+      base: object
+      properties:
+        size:
+          type: integer
+          format: uint64
 
     - name: JobID
       base: string
