@@ -35,13 +35,14 @@ routes:
 
   /jobs:
     get:
-      query:
-        per-page:
-          type: integer
-          format: uint32
-        page-number:
-          type: integer
-          format: uint32
+      request:
+        query:
+          per-page:
+            type: integer
+            format: uint32
+          page-number:
+            type: integer
+            format: uint32
       responses:
         200:
           summary: Job List

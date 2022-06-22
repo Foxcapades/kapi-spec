@@ -5,7 +5,6 @@
   "properties": {
     "summary":     { "type": "string" },
     "description": { "type": "string" },
-    "query":       { "$ref": "../query-map.json" },
     "request":     { "$ref": "../request/request-without-body.json" },
     "responses":   { "$ref": "../response/response-map.json" }
   },
