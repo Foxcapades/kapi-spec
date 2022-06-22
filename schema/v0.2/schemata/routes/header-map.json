@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "../segments/types/type-reference.json"
+  },
+  "properties": {
+    "Expect": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Max-Forwards": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Cache-Control": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Host": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Pragma": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Range": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "TE": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "If-Match": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "If-None-Match": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "If-Modified-Since": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "If-Unmodified-Since": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "If-Range": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Accept": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Accept-Charset": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Accept-Encoding": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Accept-Language": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Authorization": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Proxy-Authorization": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "From": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "Referer": {
+      "$ref": "../segments/types/type-reference.json"
+    },
+    "User-Agent": {
+      "$ref": "../segments/types/type-reference.json"
+    }
+  }
+}

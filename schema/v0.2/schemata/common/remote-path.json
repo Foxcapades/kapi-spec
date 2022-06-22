@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Remote URI",
+  "type": "string",
+  "pattern": "^[a-zA-Z][a-zA-Z\\d\\-+.]*://[\\w\\d\\-.~:/?#\\[\\]@!$&'()*+,;=%]+$",
+  "examples": [
+    "ftp://my.site/path/to/my/file",
+    "http://something/path/to?file=mine",
+    "https://foo:bar@fizz.buzz:8080/some_file",
+  ]
+}

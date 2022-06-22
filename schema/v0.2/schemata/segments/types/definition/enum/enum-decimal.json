@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Decimal Enum",
+  "description": "Definition of an enum type whose values are backed by a decimal property.",
+  "type": "object",
+  "properties": {
+    "name":        { "$ref": "../../../../common/type-name.json" },
+    "base":        { "enum": [ "enum" ] },
+    "valueType":   { "enum": [ "decimal" ] },
+    "valueFormat": { "$ref": "../../decimal-format.json" },
+    "values":      {
+      "type": "object",
+      "patternProperties": { "^\\w[\\w\\d]*$": { "type": "number" } },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "valueType",
+    "values"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "name": "MyEnum",
+      "base": "enum",
+      "valueType": "decimal",
+      "values": {
+        "MyEnumValue1": 3.1,
+        "MyEnumValue2": 5.2,
+        "MyEnumValue3": 7.3
+      }
+    },
+    {
+      "name": "MyEnum",
+      "base": "enum",
+      "valueType": "decimal",
+      "valueFormat": "big",
+      "values": {
+        "MyEnumValue1": 3.1,
+        "MyEnumValue2": 5.2,
+        "MyEnumValue3": 7.3
+      }
+    }
+  ]
+}

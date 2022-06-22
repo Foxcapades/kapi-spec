@@ -1,0 +1,31 @@
+kapi: v0.2
+type: library
+segments:
+  types:
+    - name: JobID
+      base: string
+      pattern: ^[\da-fA-F]{32}$
+      minLength: 32
+      maxLength: 32
+
+    - name: JobResponse
+      base: object
+      properties:
+        jobId:
+          type: JobID
+        status:
+          type: JobStatus
+        queuePosition:
+          type: integer
+          format: uint32
+          required: false
+
+    - name: JobStatus
+      base: enum
+      valueType: string
+      values:
+        Queued: queued
+        InProgress: in-progress
+        Complete: complete
+        Failed: failed
+        Expired: expired

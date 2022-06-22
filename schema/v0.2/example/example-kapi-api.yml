@@ -1,0 +1,175 @@
+kapi: v0.2
+
+info:
+  title: Example API
+  version: 1.0.0
+
+imports:
+  jobs: ./includes/jobs.yml
+
+routes:
+
+  # TODO: this is a stupid example
+  /countArray:
+    post:
+      request:
+        content:
+          application/json:
+            value:
+              type: list
+              values:
+                type: string
+      responses:
+        200:
+          summary: Array Element Count
+          content:
+            text/plain:
+              value:
+                type: integer
+
+  # TODO: this is a stupid example
+  /reverse:
+    post:
+      summary: String Reverse
+      description: |
+        Asynchronously reverses the given input string.
+        
+        This method returns a reference to the created async job.  The job ID
+        included in the response object may be used with the `/jobs` endpoints
+        to check the status of your job or download the result.
+      request:
+        content:
+          application/json:
+            value:
+              type: ReverseRequest
+      responses:
+        200:
+          summary: Jub Submitted Successfully
+          content:
+            application/json:
+              value:
+                type: jobs.JobResponse
+
+  /jobs:
+    get:
+      request:
+        query:
+          per-page:
+            type: integer
+            format: uint32
+          page-number:
+            type: integer
+            format: uint32
+      responses:
+        200:
+          summary: Job List
+          content:
+            application/json:
+              value:
+                type: list
+                values:
+                  type: jobs.JobResponse
+        500:
+          summary: Internal Server Error
+          content:
+            application/json:
+              value:
+                type: ServerError
+
+
+  /jobs/{job-id}:
+    uri:
+      - name: job-id
+        value:
+          type: jobs.JobID
+    get:
+      summary: Lookup a job
+      description: Lookup a job by ID.
+      responses:
+        200:
+          summary: Success
+          content:
+            application/json:
+              value:
+                type: jobs.JobResponse
+        404:
+          summary: Not Found
+          content:
+            application/json:
+              value:
+                type: NotFound
+        500:
+          summary: Internal Server Error
+          content:
+            application/json:
+              value:
+                type: ServerError
+
+
+  /jobs/{job-id}/files:
+    uri:
+      - name: job-id
+        value:
+          type: jobs.JobID
+    get:
+      summary: List Job Files
+      description: Lists the files available for a target job.
+      responses:
+        200:
+          summary: Success
+          content:
+            application/json:
+              value:
+                type: map
+                keys:
+                  type: string
+                values:
+                  type: FileInfo
+
+        404:
+          summary: Not Found
+          description: Requested job was not found.
+          content:
+            application/json:
+              value:
+                type: NotFound
+        500:
+          summary: Internal Server Error
+          content:
+            application/json:
+              value:
+                type: ServerError
+
+segments:
+  types:
+    - name: NotFound
+      base: object
+      properties:
+        code:
+          type: integer
+          default: 404
+        message:
+          type: string
+
+    - name: ServerError
+      base: object
+      properties:
+        code:
+          type: integer
+          default: 500
+        message:
+          type: string
+
+    - name: ReverseRequest
+      base: object
+      properties:
+        input:
+          type: string
+
+    - name: FileInfo
+      base: object
+      properties:
+        size:
+          type: integer
+          format: uint64
+

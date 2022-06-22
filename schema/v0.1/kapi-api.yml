@@ -244,7 +244,7 @@ definitions:
         $ref: "#/definitions/typeReference"
     required:
       - name
-      - type
+      - types
 
   # endregion Headers
 
@@ -268,7 +268,7 @@ definitions:
         $ref: "#/definitions/typeReference"
     required:
       - name
-      - type
+      - types
 
   # endregion Query Parameters
 
@@ -291,7 +291,7 @@ definitions:
         $ref: "#/definitions/typeReference"
     required:
       - name
-      - type
+      - types
 
   # endregion URI Parameters
 
@@ -348,7 +348,7 @@ definitions:
 
   typeReference:
     title: Type Reference
-    description: Reference to either a built-in or custom defined type.
+    description: Reference to either a built-in or custom defined types.
     oneOf:
       - $ref: "#/definitions/builtInType"
       - $ref: "#/definitions/typeName"
@@ -381,7 +381,7 @@ definitions:
 
   typeDefinition:
     title: Type Definition Base
-    description: Defines properties common to all type definitions.
+    description: Defines properties common to all types definitions.
     type: object
     properties:
       name:
@@ -396,7 +396,7 @@ definitions:
 
   collectionType:
     title: Collection Type Definition Base
-    description: Defines properties common to all collection type definitions.
+    description: Defines properties common to all collection types definitions.
     allOf:
       - $ref: "#/definitions/traitSized"
       - type: object
@@ -421,7 +421,7 @@ definitions:
   ###########################################################################
 
   anyType:
-    title: '"Any type" type declaration.'
+    title: '"Any types" types declaration.'
     allOf:
       - $ref: "#/definitions/typeDefinition"
       - type: object
@@ -431,7 +431,7 @@ definitions:
             enum:
               - any
         required:
-          - type
+          - types
 
   arrayType:
     title: Array Type Declaration
@@ -445,7 +445,7 @@ definitions:
             enum:
               - array
         required:
-          - type
+          - types
 
   binaryType:
     title: Binary Type Declaration
@@ -463,7 +463,7 @@ definitions:
               - array
               - stream
         required:
-          - type
+          - types
 
   booleanType:
     title: Boolean Type Declaration
@@ -476,7 +476,7 @@ definitions:
             enum:
               - boolean
         required:
-          - type
+          - types
 
 
   decimalType:
@@ -505,7 +505,7 @@ definitions:
               - big
             default: float64
         required:
-          - type
+          - types
 
   integerType:
     title: Integer Type Declaration
@@ -539,7 +539,7 @@ definitions:
               - big
             default: int32
         required:
-          - type
+          - types
 
   listType:
     title: List Type Declaration
@@ -553,7 +553,7 @@ definitions:
             enum:
               - list
         required:
-          - type
+          - types
 
   mapType:
     allOf:
@@ -570,7 +570,7 @@ definitions:
           items:
             $ref: "#/definitions/typeReference"
         required:
-          - type
+          - types
           - keys
           - items
 
@@ -590,11 +590,11 @@ definitions:
             patternProperties:
               "^[a-zA-Z][\d\w]+$":
                 title: Type Name Reference
-                description: Name of a declared or built-in type.
+                description: Name of a declared or built-in types.
                 $ref: "#/definitions/typeReference"
             additionalProperties: false
         required:
-          - type
+          - types
 
   setType:
     allOf:
@@ -607,7 +607,7 @@ definitions:
             enum:
               - set
         required:
-          - type
+          - types
 
   stringType:
     allOf:
@@ -627,7 +627,7 @@ definitions:
             type: string
             format: regex
         required:
-          - type
+          - types
 
 type: object
 properties:

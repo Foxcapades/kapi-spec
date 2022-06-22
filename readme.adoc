@@ -1,0 +1,11 @@
+= KAPI
+
+////
+* written in either yaml or json (no YAML specific syntax)
+* parser friendly
+* strict schema
+** strong syntax-hinting in most modern editors
+* built for statically typed languages
+
+
+////

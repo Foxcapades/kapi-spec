@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Local Path",
+  "type": "string",
+  "pattern": "^/?[^/\\n]+(?:/[^/\\n]+)*$",
+  "examples": [
+    "/foo/bar",
+    "fizz/buzz",
+    "../my/schema.yml"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "KAPI Version",
+  "description": "KAPI specification version used by this KAPI document.",
+  "enum": [ "v0.2" ]
+}

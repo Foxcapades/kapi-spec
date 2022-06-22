@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "https://kapi.foxcapades.io/v0.2/schemata/segments/uri-variable-definition",
+  "title": "URI Variable Definition",
+  "type": "object",
+  "properties": {
+    "name": {
+      "title": "Variable Name",
+      "type": "string",
+      "pattern": "^[a-z]+(?:-[a-z]+)*$"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "value": {
+      "$ref": "../segments/types/type-reference.json"
+    }
+  },
+  "required": [
+    "name",
+    "value"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "API Segment Definitions",
+  "type": "object",
+  "properties": {
+    "types": {
+      "$ref": "../segments/type-definition-array.json"
+    }
+  },
+  "additionalProperties": false
+}

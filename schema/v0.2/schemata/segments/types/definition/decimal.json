@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Decimal Type Definition",
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "../../../common/type-name.json"
+    },
+    "base": {
+      "type": "string",
+      "enum": [
+        "decimal"
+      ]
+    },
+    "exclusiveMinimum": {
+      "type": "number"
+    },
+    "exclusiveMaximum": {
+      "type": "number"
+    },
+    "inclusiveMinimum": {
+      "type": "number"
+    },
+    "inclusiveMaximum": {
+      "type": "number"
+    },
+    "example": {
+      "type": "number"
+    },
+    "examples": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "base"
+  ],
+  "additionalProperties": false
+}
