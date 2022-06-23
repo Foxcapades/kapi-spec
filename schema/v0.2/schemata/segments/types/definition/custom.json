@@ -40,12 +40,9 @@
       },
       "additionalProperties": false
     },
-    "example": { "type": "object" },
+    "example": { "$ref": "../examples/object-example.json" },
 
-    "examples": {
-      "type": "object",
-      "additionalProperties": { "type": "object" }
-    }
+    "examples": { "$ref": "../examples/object-example-map.json" }
   },
   "required": [
     "name",

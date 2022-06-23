@@ -1,16 +1,13 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema",
+  "$schema": "https://json-schema.org/draft-07/schema#",
   "title": "Boolean Type Definition",
   "description": "Defines a new-type based on the type boolean.",
   "type": "object",
   "properties": {
     "name": { "$ref": "../../../common/type-name.json" },
     "base": { "enum": [ "boolean" ] },
-    "example": { "type": "boolean" },
-    "examples": {
-      "type": "object",
-      "additionalProperties": { "type": "boolean" }
-    }
+    "example": { "$ref": "../examples/boolean-example.json" },
+    "examples": { "$ref": "../examples/boolean-example-map.json" }
   },
   "required": [
     "name",

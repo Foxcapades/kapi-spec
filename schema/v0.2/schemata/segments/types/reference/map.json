@@ -3,28 +3,12 @@
   "title": "List Reference",
   "type": "object",
   "properties": {
-    "type": {
-      "type": "string",
-      "enum": [ "map" ]
-    },
-    "keys": {
-      "$ref": "../type-reference.json"
-    },
-    "values": {
-      "$ref": "../type-reference.json"
-    },
-    "default": {
-      "type": "object"
-    },
-    "example": {
-      "type": "object"
-    },
-    "examples": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "object"
-      }
-    }
+    "type": { "enum": [ "map" ] },
+    "keys": { "$ref": "../type-reference.json" },
+    "values": { "$ref": "../type-reference.json" },
+    "default": { "type": "object" },
+    "example": { "$ref": "../examples/map-example.json" },
+    "examples": { "$ref": "../examples/map-example-map.json" }
   },
   "required": [
     "type",

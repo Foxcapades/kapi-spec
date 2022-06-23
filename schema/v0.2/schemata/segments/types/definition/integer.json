@@ -9,13 +9,8 @@
     "exclusiveMaximum": { "type": "integer" },
     "inclusiveMinimum": { "type": "integer" },
     "inclusiveMaximum": { "type": "integer" },
-    "example": { "type": "integer" },
-    "examples": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "integer"
-      }
-    }
+    "example": { "$ref": "../examples/integer-example.json" },
+    "examples": { "$ref": "../examples/integer-example-map.json" }
   },
   "required": [
     "name",

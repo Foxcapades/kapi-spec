@@ -6,11 +6,8 @@
     "type":     { "enum": [ "array" ] },
     "values":   { "$ref": "../type-reference.json" },
     "default":  { "type": "array" },
-    "example":  { "type": "array" },
-    "examples": {
-      "type": "object",
-      "additionalProperties": { "type": "array" }
-    }
+    "example":  { "$ref": "../examples/array-example.json" },
+    "examples": { "$ref": "../examples/array-example-map.json" }
   },
   "required": [
     "type",

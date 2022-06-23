@@ -3,25 +3,11 @@
   "title": "Decimal Reference",
   "type": "object",
   "properties": {
-    "type": {
-      "type": "string",
-      "enum": [ "decimal" ]
-    },
-    "format": {
-      "$ref": "../decimal-format.json"
-    },
-    "default": {
-      "type": "number"
-    },
-    "example": {
-      "type": "number"
-    },
-    "examples": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "number"
-      }
-    }
+    "type": { "enum": [ "decimal" ] },
+    "format": { "$ref": "../decimal-format.json" },
+    "default": { "type": "number" },
+    "example": { "$ref": "../examples/decimal-example.json" },
+    "examples": { "$ref": "../examples/decimal-example-map.json" }
   },
   "required": [
     "type"

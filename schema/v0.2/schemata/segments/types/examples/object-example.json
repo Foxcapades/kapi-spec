@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Object Example Value",
+  "type": "object",
+  "properties": {
+    "summary": { "type": "string" },
+    "description": { "type": "string" },
+    "value": { "type": "object" }
+  },
+  "required": [ "value" ],
+  "additionalProperties": false
+}

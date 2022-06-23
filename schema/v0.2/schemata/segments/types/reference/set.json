@@ -3,25 +3,11 @@
   "title": "List Reference",
   "type": "object",
   "properties": {
-    "type": {
-      "type": "string",
-      "enum": [ "set" ]
-    },
-    "values": {
-      "$ref": "../type-reference.json"
-    },
-    "default": {
-      "type": "array"
-    },
-    "example": {
-      "type": "array"
-    },
-    "examples": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "array"
-      }
-    }
+    "type": { "enum": [ "set" ] },
+    "values": { "$ref": "../type-reference.json" },
+    "default": { "type": "array" },
+    "example": { "$ref": "../examples/set-example.json" },
+    "examples": { "$ref": "../examples/set-example-map.json" }
   },
   "required": [
     "type",

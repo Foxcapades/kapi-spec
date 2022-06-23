@@ -24,15 +24,8 @@
     "inclusiveMaximum": {
       "type": "number"
     },
-    "example": {
-      "type": "number"
-    },
-    "examples": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "number"
-      }
-    }
+    "example": { "$ref": "../examples/decimal-example.json" },
+    "examples": { "$ref": "../examples/decimal-example-map.json" }
   },
   "required": [
     "name",

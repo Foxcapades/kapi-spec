@@ -3,22 +3,10 @@
   "title": "String Reference",
   "type": "object",
   "properties": {
-    "type": {
-      "type": "string",
-      "enum": [ "string" ]
-    },
-    "default": {
-      "type": "string"
-    },
-    "example": {
-      "type": "string"
-    },
-    "examples": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    }
+    "type": { "enum": [ "string" ] },
+    "default": { "type": "string" },
+    "example": { "$ref": "../examples/string-example.json" },
+    "examples": { "$ref": "../examples/string-example-map.json" }
   },
   "required": [
     "type"

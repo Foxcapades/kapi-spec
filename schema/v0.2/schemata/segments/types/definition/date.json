@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Date Type Definition",
+  "type": "object",
+  "properties": {
+    "name":     { "$ref": "../../../common/type-name.json" },
+    "base":     { "enum": [ "datetime" ]                   },
+    "format":   { "$ref": "../datetime-format.json"        },
+    "example":  { "$ref": "../examples/date-example.json" },
+    "examples": { "$ref": "../examples/date-example-map.json" }
+  },
+  "required": [
+    "name",
+    "base"
+  ],
+  "additionalProperties": false
+}

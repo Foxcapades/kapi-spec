@@ -17,13 +17,8 @@
       "type": "string",
       "format": "regex"
     },
-    "example": { "type": "string" },
-    "examples": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    }
+    "example": { "$ref": "../examples/string-example.json" },
+    "examples": { "$ref": "../examples/string-example-map.json" }
   },
   "required": [
     "name",

@@ -5,13 +5,8 @@
   "properties": {
     "type":     { "enum": [ "boolean" ] },
     "default":  { "type": "boolean" },
-    "example":  { "type": "boolean" },
-    "examples": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "boolean"
-      }
-    }
+    "example":  { "$ref": "../examples/boolean-example.json" },
+    "examples": { "$ref": "../examples/boolean-example-map.json" }
   },
   "required": [
     "type"

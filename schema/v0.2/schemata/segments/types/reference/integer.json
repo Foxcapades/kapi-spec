@@ -3,25 +3,11 @@
   "title": "Integer Reference",
   "type": "object",
   "properties": {
-    "type": {
-      "type": "string",
-      "enum": [ "integer" ]
-    },
-    "format": {
-      "$ref": "../integer-format.json"
-    },
-    "default": {
-      "type": "integer"
-    },
-    "example": {
-      "type": "integer"
-    },
-    "examples": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "integer"
-      }
-    }
+    "type": { "enum": [ "integer" ] },
+    "format": { "$ref": "../integer-format.json" },
+    "default": { "type": "integer" },
+    "example": { "$ref": "../examples/integer-example.json" },
+    "examples": { "$ref": "../examples/integer-example-map.json" }
   },
   "required": [
     "type"

@@ -1,7 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema",
-  "title": "Non-Parameterized Route",
-  "description": "A simple HTTP route whose path does not contain any URI parameters.",
+  "title": "Parameterized Route",
   "type": "object",
   "properties": {
     "uri": {

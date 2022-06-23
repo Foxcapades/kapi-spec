@@ -2,7 +2,9 @@
   "$schema": "https://json-schema.org/draft-07/schema",
   "type": "object",
   "properties": {
-    "type": { "$ref": "../../../common/import-type-name.json" }
+    "type": { "$ref": "../../../common/import-type-name.json" },
+    "example": { "$ref": "../examples/any-example.json" },
+    "examples": { "$ref": "../examples/any-example-map.json" }
   },
   "required": [
     "type"

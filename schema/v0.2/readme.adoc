@@ -4,3 +4,101 @@
 
 TODO!!
 
+== Data Types
+
+TODO!!
+
+=== Type Definition
+
+==== Base Types
+
+* `array`
+* `boolean`
+* `date`
+* `decimal`
+* `integer`
+* `list`
+* `map`
+* `object`
+* `set`
+* `string`
+
+
+==== Defining Types
+
+.Common Properties
+[cols="1m,1m,4"]
+|===
+| Property | Required | Description
+
+| name
+| true
+| Name of the new type being defined.
+
+| base
+| true
+| Base type that the new type is built from. +
+Must be one of the <<Base Types>> defined above.
+
+| example
+| false
+| A singular example value of the defined type. +
+
+| examples
+| false
+| A map of named example values
+
+|===
+
+=== Simple Types
+
+TODO!!
+
+* `boolean`
+* `date`
+* `decimal`
+* `integer`
+* `string`
+
+==== Boolean
+
+==== Date
+
+TODO
+
+.Java Date Type Mappings
+[cols="1m,1m,1m"]
+|===
+| Format | Examples | Java Type
+
+| date
+| "2014-06-15"
+| LocalDate
+
+| time
+| "15:26:45.1543"
+| LocalTime
+
+| datetime
+| "2014-06-15T15:26:45.1543"
+| LocalDateTime
+
+| datetime-tz
+| "2014-06-15T15:26:45.1543Z"
+| OffsetDateTime
+
+|===
+
+=== Complex Types
+
+* `array`
+* `list`
+* `map`
+* `object`
+* `set`
+
+////
+
+
+
+////
