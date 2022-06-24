@@ -1,0 +1,1057 @@
+$schema: https://json-schema.org/draft-07/schema
+
+oneOf:
+- $ref: "#/definitions/doc-api"
+- $ref: "#/definitions/doc-library"
+
+definitions:
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃                                                                      ┃ #
+  # ┃  Documents                                                           ┃ #
+  # ┃                                                                      ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  doc-api:
+    type: object
+    properties:
+      kapi:
+        $ref: "#/definitions/kapi-version"
+      type:
+        type: string
+        enum:
+        - api
+      info:
+        $ref: "#/definitions/seg-info"
+      imports:
+        $ref: "#/definitions/seg-imports"
+      routes:
+        $ref: "#/definitions/seg-routes"
+      components:
+        $ref: "#/definitions/seg-components"
+    required:
+    - kapi
+    - type
+    - info
+    additionalProperties: false
+
+  doc-library:
+    type: object
+    properties:
+      kapi:
+        $ref: "#/definitions/kapi-version"
+      type:
+        type: string
+        enum:
+        - library
+      components:
+        $ref: "#/definitions/seg-components"
+    required:
+    - kapi
+    - type
+    - components
+    additionalProperties: false
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃                                                                      ┃ #
+  # ┃  Document Segments                                                   ┃ #
+  # ┃                                                                      ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  seg-imports:
+    type: object
+    patternProperties:
+      ^[a-z][\w\d]*$:
+        oneOf:
+        - $ref: "#/definitions/path-remote"
+        - $ref: "#/definitions/path-local"
+    additionalProperties: false
+
+  seg-info:
+    type: object
+    properties:
+      title:
+        title: API Title
+        type: string
+      summary:
+        title: API Summary
+        description: Brief, human friendly summary or tagline for the API.
+        type: string
+      description:
+        title: API Description
+        description: |
+          Long description of the API and what it does.
+          
+          Markdown is supported.
+        type: string
+      version:
+        title: API Version
+        type:
+        - string
+        - number
+    required:
+    - title
+    - version
+
+  seg-routes:
+    title: API Route Definitions
+    description: Definitions of routes or endpoints available on this API.
+    type: object
+    minProperties: 1
+    additionalProperties: false
+    patternProperties:
+      ^(?:/[\d\w\-.]+)+$:
+        $ref: "#/definitions/route-plain"
+      ^(?:/(?:[\d\w\-.]+|\{[\d\w\-]+\}))+$:
+        $ref: "#/definitions/route-patterned"
+
+  seg-components:
+    title: API Component Definitions
+    type: object
+    properties:
+      types:
+        type: array
+        items: {}
+    required:
+    - types
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃                                                                      ┃ #
+  # ┃  Routes & Methods                                                    ┃ #
+  # ┃                                                                      ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Routes                                                              ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  route-plain:
+    title: Non-Parameterized Route
+    description: A route/endpoint that does not accept URI parameters.
+    type: object
+    properties:
+      summary:
+        title: Route Summary
+        type: string
+      description:
+        title: Route Description
+        type: string
+      delete:
+        title: Delete Requests
+        $ref: "#/definitions/method-no-body"
+      get:
+        title: Get Requests
+        $ref: "#/definitions/method-no-body"
+      head:
+        title: Head Requests
+        $ref: "#/definitions/method-no-body"
+      options:
+        title: Options Requests
+        $ref: "#/definitions/method-no-body"
+      patch:
+        title: Patch Requests
+        $ref: "#/definitions/method-with-body"
+      post:
+        title: Post Requests
+        $ref: "#/definitions/method-with-body"
+      put:
+        title: Put Requests
+        $ref: "#/definitions/method-with-body"
+
+  route-patterned:
+    title: Parameterized Route
+    description: A route/endpoint with one or more URI parameters.
+    allOf:
+    - $ref: "#/definitions/route-plain"
+    - type: object
+      properties:
+        uri:
+          type: array
+          items:
+            $ref: "#/definitions/uri-param"
+          minItems: 1
+      required:
+      - uri
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Methods                                                             ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  # Base properties for method definitions.
+  method-base:
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+      responses:
+        $ref: "#/definitions/response-status-map"
+    required:
+    - responses
+
+  method-no-body:
+    title: HTTP Method Without Request Body
+    allOf:
+    - $ref: "#/definitions/method-base"
+    - properties:
+        request:
+          $ref: "#/definitions/request-no-body"
+
+  method-with-body:
+    title: HTTP Method With Request Body
+    allOf:
+    - $ref: "#/definitions/method-base"
+    - properties:
+        request:
+          $ref: "#/definitions/request-with-body"
+      required:
+      - request
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  URI Params                                                          ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  uri-param:
+    title: URI Parameter
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      value:
+        $ref: "#/definitions/type-reference"
+    required:
+    - name
+    - value
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Requests                                                            ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  request-no-body:
+    title: HTTP Request Without Body
+    type: object
+    properties:
+      headers: { }
+      query: { }
+
+  request-with-body:
+    title: HTTP Request With Body
+    allOf:
+    - $ref: "#/definitions/request-no-body"
+    - properties:
+        body: { }
+      required:
+      - body
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Responses                                                           ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  response-status-map:
+    title: Response Status Map
+    description: |
+      Map of HTTP status codes to the responses that are returned with those
+      codes.
+    type: object
+    properties:
+      # 1xx Codes
+      100:
+        title: Continue
+        $ref: "#/definitions/response"
+      101:
+        title: Switching Protocols
+        $ref: "#/definitions/response"
+      102:
+        title: Processing
+        $ref: "#/definitions/response"
+      103:
+        title: Early Hints
+        $ref: "#/definitions/response"
+      # 2xx Codes
+      200:
+        title: OK
+        $ref: "#/definitions/response"
+      201:
+        title: Created
+        $ref: "#/definitions/response"
+      202:
+        title: Accepted
+        $ref: "#/definitions/response"
+      203:
+        title: Non-Authoritative Information
+        $ref: "#/definitions/response"
+      204:
+        title: No Content
+        $ref: "#/definitions/response"
+      205:
+        title: Reset Content
+        $ref: "#/definitions/response"
+      206:
+        title: Partial Content
+        $ref: "#/definitions/response"
+      207:
+        title: Multi-Status
+        $ref: "#/definitions/response"
+      208:
+        title: Already Reported
+        $ref: "#/definitions/response"
+      226:
+        title: IM Used
+        $ref: "#/definitions/response"
+      # 3xx Codes
+      300:
+        title: Multiple Choices
+        $ref: "#/definitions/response"
+      301:
+        title: Moved Permanently
+        $ref: "#/definitions/response"
+      302:
+        title: Found
+        $ref: "#/definitions/response"
+      303:
+        title: See Other
+        $ref: "#/definitions/response"
+      304:
+        title: Not Modified
+        $ref: "#/definitions/response"
+      305:
+        title: Use Proxy
+        $ref: "#/definitions/response"
+      306:
+        title: Switch Proxy
+        $ref: "#/definitions/response"
+      307:
+        title: Temporary Redirect
+        $ref: "#/definitions/response"
+      308:
+        title: Permanent Redirect
+        $ref: "#/definitions/response"
+      # 4xx Codes
+      400:
+        title: Bad Request
+        $ref: "#/definitions/response"
+      401:
+        title: Unauthorized
+        $ref: "#/definitions/response"
+      402:
+        title: Payment Required
+        $ref: "#/definitions/response"
+      403:
+        title: Forbidden
+        $ref: "#/definitions/response"
+      404:
+        title: Not Found
+        $ref: "#/definitions/response"
+      405:
+        title: Method Not Allowed
+        $ref: "#/definitions/response"
+      406:
+        title: Not Acceptable
+        $ref: "#/definitions/response"
+      407:
+        title: Proxy Authentication Required
+        $ref: "#/definitions/response"
+      408:
+        title: Request Timeout
+        $ref: "#/definitions/response"
+      409:
+        title: Conflict
+        $ref: "#/definitions/response"
+      410:
+        title: Gone
+        $ref: "#/definitions/response"
+      411:
+        title: Length Required
+        $ref: "#/definitions/response"
+      412:
+        title: Precondition Failed
+        $ref: "#/definitions/response"
+      413:
+        title: Payload Too Large
+        $ref: "#/definitions/response"
+      414:
+        title: URI Too Long
+        $ref: "#/definitions/response"
+      415:
+        title: Unsupported Media Type
+        $ref: "#/definitions/response"
+      416:
+        title: Range Not Satisfiable
+        $ref: "#/definitions/response"
+      417:
+        title: Expectation Failed
+        $ref: "#/definitions/response"
+      418:
+        title: I'm a Teapot
+        $ref: "#/definitions/response"
+      419:
+        title: Page Expired
+        $ref: "#/definitions/response"
+      420:
+        title: Enhance Your Calm
+        $ref: "#/definitions/response"
+      421:
+        title: Misdirected Request
+        $ref: "#/definitions/response"
+      422:
+        title: Unprocessable Entity
+        $ref: "#/definitions/response"
+      423:
+        title: Locked
+        $ref: "#/definitions/response"
+      424:
+        title: Failed Dependency
+        $ref: "#/definitions/response"
+      425:
+        title: Too Early
+        $ref: "#/definitions/response"
+      426:
+        title: Upgrade Required
+        $ref: "#/definitions/response"
+      428:
+        title: Precondition Required
+        $ref: "#/definitions/response"
+      429:
+        title: Too Many Requests
+        $ref: "#/definitions/response"
+      430:
+        title: Request Header Fields Too Large
+        $ref: "#/definitions/response"
+      431:
+        title: Request Header Fields Too Large
+        $ref: "#/definitions/response"
+      440:
+        title: Login Time-out
+        $ref: "#/definitions/response"
+      449:
+        title: Retry With
+        $ref: "#/definitions/response"
+      450:
+        title: Blocked by Windows Parental Controls
+        $ref: "#/definitions/response"
+      451:
+        title: Unavailable For Legal Reasons
+        $ref: "#/definitions/response"
+      498:
+        title: Invalid Token
+        $ref: "#/definitions/response"
+      499:
+        title: Token Required
+        $ref: "#/definitions/response"
+      # 5xx Codes
+      500:
+        title: Internal Server Error
+        $ref: "#/definitions/response"
+      501:
+        title: Not Implemented
+        $ref: "#/definitions/response"
+      502:
+        title: Bad Gateway
+        $ref: "#/definitions/response"
+      503:
+        title: Service Unavailable
+        $ref: "#/definitions/response"
+      504:
+        title: Gateway Timeout
+        $ref: "#/definitions/response"
+      505:
+        title: HTTP Version Not Supported
+        $ref: "#/definitions/response"
+      506:
+        title: Variante Also Negotiates
+        $ref: "#/definitions/response"
+      507:
+        title: Insufficient Storage
+        $ref: "#/definitions/response"
+      508:
+        title: Loop Detected
+        $ref: "#/definitions/response"
+      509:
+        title: Bandwidth Limit Exceeded
+        $ref: "#/definitions/response"
+      510:
+        title: Not Extended
+        $ref: "#/definitions/response"
+      511:
+        title: Network Authentication Required
+        $ref: "#/definitions/response"
+      529:
+        title: Site is Overloaded
+        $ref: "#/definitions/response"
+      530:
+        title: Site is Frozen
+        $ref: "#/definitions/response"
+      598:
+        title: Network Read Timeout Error
+        $ref: "#/definitions/response"
+      599:
+        title: Network Connect Timeout Error
+        $ref: "#/definitions/response"
+    patternProperties:
+      ^[1-5]\d\d$:
+        $ref: "#/definitions/response"
+    minProperties: 1
+
+  response-mime-map:
+    title: Response MimeType Map
+    description: Map of media types to the response body definitions.
+    type: object
+    properties:
+      "application/gzip":
+        $ref: "#/definitions/response-content"
+      "application/json":
+        $ref: "#/definitions/response-content"
+      "application/ld+json":
+        $ref: "#/definitions/response-content"
+      "application/octet-stream":
+        $ref: "#/definitions/response-content"
+      "application/xml":
+        $ref: "#/definitions/response-content"
+      "application/zip":
+        $ref: "#/definitions/response-content"
+      "text/csv":
+        $ref: "#/definitions/response-content"
+      "text/html":
+        $ref: "#/definitions/response-content"
+      "text/plain":
+        $ref: "#/definitions/response-content"
+    patternProperties:
+      ^[a-z]+/[\w\d\-.+]+$:
+        $ref: "#/definitions/response-content"
+
+  response:
+    title: Response
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+      content:
+        $ref: "#/definitions/response-mime-map"
+    required:
+    - content
+
+  response-content:
+    title: Response Content
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+      value:
+        $ref: "#/definitions/type-reference"
+    required:
+    - value
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃                                                                      ┃ #
+  # ┃  Types                                                               ┃ #
+  # ┃                                                                      ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Builtin Types                                                       ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  type-simple:
+    title: Simple Builtin Types
+    enum:
+    - boolean
+    - date
+    - decimal
+    - integer
+    - string
+
+  type-complex:
+    title: Complex Builtin Types
+    enum:
+    - array
+    - list
+    - map
+    - set
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Type References                                                     ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  type-reference:
+    oneOf:
+    - $ref: "#/definitions/type-ref-shorthand"
+    - $ref: "#/definitions/type-ref-expanded"
+
+  type-ref-shorthand:
+    title: Shorthand Type Reference
+    description: References a type by the type's name.
+    oneOf:
+    - enum: [ any ]
+    - $ref: "#/definitions/type-simple"
+    - $ref: "#/definitions/type-name"
+    - $ref: "#/definitions/type-name-import"
+
+  type-ref-expanded:
+    title: Expanded Type Reference
+    description: Customizable type reference.
+    type: object
+    oneOf:
+    - $ref: "#/definitions/type-ref-boolean"
+    - $ref: "#/definitions/type-ref-collection"
+    - $ref: "#/definitions/type-ref-date"
+    - $ref: "#/definitions/type-ref-decimal"
+    - $ref: "#/definitions/type-ref-integer"
+    - $ref: "#/definitions/type-ref-map"
+
+  type-ref-expanded-base:
+    description: Expanded type reference base property definitions.
+    type: object
+    properties:
+      nullable:
+        type: boolean
+        default: false
+
+  type-ref-boolean:
+    title: Boolean Type Ref
+    allOf:
+    - $ref: "#/definitions/type-ref-expanded-base"
+    - type: object
+      properties:
+        type:    { enum: [ boolean ] }
+        default: { type: boolean }
+        example: { type: boolean }
+        examples:
+          type: array
+          items: { $ref: "#/definitions/example-boolean" }
+      required:
+      - type
+
+  type-ref-date:
+    title: Date Type Ref
+    allOf:
+    - $ref: "#/definitions/type-ref-expanded-base"
+    - type: object
+      properties:
+        type: { enum: [ date ] }
+    - oneOf:
+      - properties:
+          format: { enum: [ date ] }
+          default: { $ref: "#/definitions/date-string-date" }
+          example: { $ref: "#/definitions/date-string-date" }
+          examples:
+            type: array
+            items: { $ref: "#/definitions/example-date-date" }
+      - properties:
+          format: { enum: [ time ] }
+          default: { $ref: "#/definitions/date-string-time" }
+          example: { $ref: "#/definitions/date-string-time" }
+          examples:
+            type: array
+            items: { $ref: "#/definitions/example-date-time" }
+      - properties:
+          format: { enum: [ datetime ] }
+          default: { $ref: "#/definitions/date-string-datetime" }
+          example: { $ref: "#/definitions/date-string-datetime" }
+          examples:
+            type: array
+            items: { $ref: "#/definitions/example-date-datetime" }
+      - properties:
+          format: { enum: [ datetime-tz ] }
+          default: { $ref: "#/definitions/date-string-datetime-tz" }
+          example: { $ref: "#/definitions/date-string-datetime-tz" }
+          examples:
+            type: array
+            items: { $ref: "#/definitions/example-date-datetime-tz" }
+
+  type-ref-decimal:
+    title: Decimal Type Ref
+    allOf:
+    - $ref: "#/definitions/type-ref-expanded-base"
+    - type: object
+      properties:
+        type:    { enum: [ decimal ] }
+        default: { type: number }
+        example: { type: number }
+        examples:
+          type: array
+          items: { $ref: "#/definitions/example-decimal" }
+      required:
+      - type
+
+  type-ref-integer:
+    title: Integer Type Ref
+    allOf:
+    - $ref: "#/definitions/type-ref-expanded-base"
+    - type: object
+      properties:
+        type:    { enum: [ integer ] }
+        default: { type: integer }
+        example: { type: integer }
+        examples:
+          type: array
+          items: { $ref: "#/definitions/example-integer" }
+      required:
+      - type
+
+  type-ref-map:
+    title: Map Type Ref
+    allOf:
+    - $ref: "#/definitions/type-ref-expanded-base"
+    - type: object
+      properties:
+        type:   { enum: [ map ] }
+        keys:   { $ref: "#/definitions/type-reference" }
+        values: { $ref: "#/definitions/type-reference" }
+      required:
+      - type
+      - keys
+      - values
+
+  type-ref-collection:
+    allOf:
+    - $ref: "#/definitions/type-ref-expanded-base"
+    - type: object
+      properties:
+        type:
+          enum:
+          - array
+          - list
+          - set
+        values: { $ref: "#/definitions/type-reference" }
+    required:
+    - type
+    - values
+
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Type Definitions                                                    ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  type-definition:
+    allOf:
+    - $ref: "#/definitions/type-def-base"
+    - oneOf:
+      - $ref: "#/definitions/type-def-boolean"
+      - $ref: "#/definitions/type-def-date"
+      - $ref: "#/definitions/type-def-decimal"
+      - $ref: "#/definitions/type-def-integer"
+      - $ref: "#/definitions/type-def-string"
+
+  type-def-base:
+    type: object
+    properties:
+      name:
+        $ref: "#/definitions/type-name"
+      summary:
+        type: string
+      description:
+        type: string
+    required:
+    - name
+
+  type-def-boolean:
+    type: object
+    properties:
+      base:
+        enum:
+        - boolean
+    required:
+    - base
+
+  type-def-date:
+    type: object
+    properties:
+      base:
+        enum:
+        - date
+      format:
+        $ref: "#/definitions/date-format"
+    required:
+    - base
+
+  type-def-enum: { }
+
+  type-def-enum-plain:
+    type: object
+    properties:
+      base:
+        enum:
+        - none
+    required:
+    - base
+
+  type-def-enum-boolean: { }
+  type-def-enum-decimal: { }
+  type-def-enum-integer: { }
+  type-def-enum-string: { }
+
+  type-def-decimal:
+    title: Decimal Based Type Definition
+    type: object
+    properties:
+      base:
+        enum:
+        - decimal
+      format:
+        $ref: "#/definitions/decimal-format"
+      eMax:
+        title: Exclusive Maximum
+        type: number
+      eMin:
+        title: Exclusive Minimum
+        type: number
+      iMax:
+        title: Inclusive Maximum
+        type: number
+      iMin:
+        title: Inclusive Minimum
+        type: number
+    required:
+    - base
+
+  type-def-integer:
+    title: Integer Based Type Definition
+    type: object
+    properties:
+      base:
+        enum:
+        - integer
+      format:
+        $ref: "#/definitions/decimal-format"
+      eMax:
+        title: Exclusive Maximum
+        type: integer
+      eMin:
+        title: Exclusive Minimum
+        type: integer
+      iMax:
+        title: Inclusive Maximum
+        type: integer
+      iMin:
+        title: Inclusive Minimum
+        type: integer
+    required:
+    - base
+
+  type-def-object: {}
+
+  type-def-object-prop: {}
+
+  type-def-string:
+    title: String Based Type Definition
+    type: object
+    properties:
+      base:
+        enum:
+        - string
+      pattern:
+        type: string
+        format: regex
+      minLength:
+        type: integer
+        minimum: 0
+      maxLength:
+        type: integer
+        minimum: 0
+    required:
+    - base
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Type Extras                                                         ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  # Type name reference with a library import prefix
+  type-name-import:
+    type: string
+    pattern: ^[a-z][\w\d]*\.[A-Z][\w\d]*$
+    examples:
+    - lib.MyType
+    - common.RequestID
+
+  type-name:
+    title: Type Name
+    description: |
+      The name of a custom defined type.
+      
+      Type names must begin with a capital letter and may consist of letters,
+      numbers, and underscores.
+    type: string
+    pattern: ^[A-Z][\w\d]*$
+    examples:
+    - MyType
+    - RequestID
+    - Something_with_underscores
+    - SomethingWithTheNumber3
+
+  integer-format:
+    enum:
+    - int8
+    - int16
+    - int32
+    - int64
+    - uint8
+    - uint16
+    - uint32
+    - uint64
+    - big
+    default: int32
+
+  decimal-format:
+    enum:
+    - float32
+    - float64
+    - big
+    default: float64
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Date Extras                                                         ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  date-format:
+    enum:
+    - date
+    - time
+    - datetime
+    - datetime-tz
+    default: datetime-tz
+
+  date-string-date:
+    title: Date String
+    type: string
+    pattern: ^\d{4}-\d{2}-\d{2}$
+    examples:
+    - 2002-10-02
+
+  date-string-time:
+    title: Time String
+    type: string
+    pattern: ^\d{2}:\d{2}:\d{2}(?:\.\d+)?$
+    examples:
+    - 15:00:00.05
+    - 15:00:00
+
+  date-string-datetime:
+    title: Datetime String Without Timezone
+    type: string
+    pattern: ^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?$
+    examples:
+    - 2002-10-02T10:00:00
+    - 2002-10-02T15:00:00.05
+    - 2002-10-02 10:00:00
+    - 2002-10-02 15:00:00.05
+
+  date-string-datetime-tz:
+    title: Datetime String With Timezone
+    type: string
+    pattern: ^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[-+]\d{2}:\d{2})$
+    examples:
+    - 2002-10-02T10:00:00-05:00
+    - 2002-10-02T15:00:00Z
+    - 2002-10-02T15:00:00.05Z
+    - 2002-10-02 10:00:00+05:00
+    - 2002-10-02 15:00:00Z
+    - 2002-10-02 15:00:00.05Z
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃                                                                      ┃ #
+  # ┃  Examples                                                            ┃ #
+  # ┃                                                                      ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  example-base:
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+    required:
+    - value
+
+  example-boolean:
+    allOf:
+    - $ref: "#/definitions/example-base"
+    - properties:
+        value: { type: boolean }
+
+  example-date-date:
+    allOf:
+    - $ref: "#/definitions/example-base"
+    - properties:
+        value: { $ref: "#/definitions/date-string-date" }
+
+  example-date-time:
+    allOf:
+    - $ref: "#/definitions/example-base"
+    - properties:
+        value: { $ref: "#/definitions/date-string-time" }
+
+  example-date-datetime:
+    allOf:
+    - $ref: "#/definitions/example-base"
+    - properties:
+        value: { $ref: "#/definitions/date-string-datetime" }
+
+  example-date-datetime-tz:
+    allOf:
+    - $ref: "#/definitions/example-base"
+    - properties:
+        value: { $ref: "#/definitions/date-string-datetime-tz" }
+
+  example-decimal:
+    allOf:
+    - $ref: "#/definitions/example-base"
+    - properties:
+        value: { type: number }
+
+  example-integer:
+    allOf:
+    - $ref: "#/definitions/example-base"
+    - properties:
+        value: { type: integer }
+
+  example-string:
+    allOf:
+    - $ref: "#/definitions/example-base"
+    - properties:
+        value: { type: string }
+
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃                                                                      ┃ #
+  # ┃  Misc Fields                                                         ┃ #
+  # ┃                                                                      ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  kapi-version:
+    title: KAPI Version
+    type: string
+    enum:
+    - v0.3
+
+  path-local:
+    title: Local Path
+    description: |
+      Path to a local file or file location relative to the location of the
+      current document.
+    type: string
+    pattern: ^/?[^/\n]+(?:/[^/\n]+)*$
+    examples:
+    - /foo/bar
+    - fizz/buzz
+    - ../my/schema.yml
+
+  path-remote:
+    title: Remote URI
+    description: |
+      URI of a remote file.
+    type: string
+    pattern: ^[a-zA-Z][a-zA-Z\d\-+.]*://[\w\d\-.~:/?#\[\]@!$&'()*+,;=%]+$
+    examples:
+    - ftp://my.site/path/to/my/file
+    - http://something/path/to?file=mine
+    - https://foo:bar@fizz.buzz:8080/some_file

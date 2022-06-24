@@ -1,0 +1,75 @@
+kapi: v0.3
+type: api
+
+info:
+  title: Example API
+  version: 1.0.0
+
+routes:
+  /api:
+    get:
+      summary: API Documentation
+      description: Returns the rendered HTML documentation for this API.
+      responses:
+        200:
+          summary: Success
+          content:
+            text/html:
+              value: any
+        500:
+          summary: Server Error
+          content:
+            application/json:
+              value:
+                type: decimal
+                examples:
+                - value: 3
+
+
+components:
+  types:
+    - name: CustomBoolean
+      base: boolean
+
+    - name: CustomDate
+      base: date
+      format: datetime-tz
+
+    - name: CustomDecimal
+      base: decimal
+      format: float64
+      iMin: 21.0
+      eMax: 22.0
+
+    - name: CustomInteger
+      base: integer
+      format: uint32
+      eMin: 0
+      iMax: 1000000
+
+    - name: CustomObject
+      base: object
+      properties:
+        anArray1:
+          type: array
+          values: CustomBoolean
+        anArray2:
+          type: array
+          values:
+            type: CustomDate
+            nullable: true
+        aBoolean:
+          type: CustomBoolean
+          required: false
+        aDate:
+          type: CustomDate
+          nullable: true
+        aDecimal: CustomDecimal
+        anInteger: CustomInteger
+        aString: CustomString
+
+    - name: CustomString
+      base: string
+      pattern: ^[\w\d]+$
+      minLength: 10
+      maxLength: 32

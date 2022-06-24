@@ -1,0 +1,5 @@
+kapi: v0.3
+type: library
+components:
+  types:
+  -
