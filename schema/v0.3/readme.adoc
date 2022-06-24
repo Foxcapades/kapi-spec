@@ -14,3 +14,87 @@ For example, if the targets for code generation are Javascript and Go, the regex
 patterns should be the subset of regex syntax that is compatible with both
 Javascript style regex and Go style regex.
 
+=== Flat Tree
+
+Unlike other API spec languages that allow arbitrary nesting of type definitions
+and objects, the KAPI API definition spec aims to remain as "flat" as possible,
+intentionally disallowing nested or inline definitions of types.
+
+This requires each new type to have a dedicated declaration, name, and home and
+makes life easier for those who have to read the spec as well as those writing
+KAPI code generation tools.
+
+=== Dates
+
+.JVM Date Format Mappings
+[cols="1m,1m"]
+|===
+| Format      | JVM Type
+| date        | LocalDate
+| time        | LocalTime
+| datetime    | LocalDateTime
+| datetime-tz | OffsetDateTime
+|===
+
+=== Numbers
+
+==== Integers
+
+===== Type Mappings
+
+.Java
+[%collapsible]
+====
+[%header, cols="1m,1m,1m"]
+|===
+| Format | Java Type  | Nullable Java Type
+| (none) | int        | Integer
+| int8   | byte       | Byte
+| int16  | short      | Short
+| int32  | int        | Integer
+| int64  | long       | Long
+| uint8  | short      | Short
+| uint16 | int        | Integer
+| uint32 | long       | Long
+| uint64 | BigInteger | BigInteger
+| big    | BigInteger | BigInteger
+|===
+====
+
+.Kotlin
+[%collapsible]
+====
+[%header, cols="1m,1m,1m"]
+|===
+| Format | Kotlin Type | Nullable Kotlin Type
+| (none) | Int         | Int?
+| int8   | Byte        | Byte?
+| int16  | Short       | Short?
+| int32  | Int         | Int?
+| int64  | Long        | Long?
+| uint8  | UByte       | UByte?
+| uint16 | UShort      | UShort?
+| uint32 | UInt        | UInt?
+| uint64 | ULong       | ULong?
+| big    | BigInteger  | BigInteger?
+|===
+====
+
+.Go
+[%collapsible]
+====
+[%header, cols="1m,1m,1m"]
+|===
+| Format | Go Type | Nullable Go Type
+| (none) | int     | *int
+| int8   | int8    | *int8
+| int16  | int16   | *int16
+| int32  | int32   | *int32
+| int64  | int64   | *int64
+| uint8  | uint8   | *uint8
+| uint16 | uint16  | *uint16
+| uint32 | uint32  | *uint32
+| uint64 | uint64  | *uint64
+| big    | big.Int | *big.Int
+|===
+====

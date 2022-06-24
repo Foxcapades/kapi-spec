@@ -34,9 +34,6 @@ routes:
             application/json:
               value: ServiceHealthInfo
 
-
-
-
 components:
   types:
   - name: ServiceHealthInfo
