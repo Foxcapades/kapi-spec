@@ -24,6 +24,8 @@ TODO: define me!
 
 == Random Thoughts to be Organized
 
+* URI Template Parameters as per https://datatracker.ietf.org/doc/html/rfc6570[RFC6570] https://datatracker.ietf.org/doc/html/rfc6570#section-1.2[Level 1]
+
 === Regex
 Regex syntax should be compatible with all generation target language regex.
 
