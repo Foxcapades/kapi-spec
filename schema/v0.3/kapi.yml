@@ -229,6 +229,38 @@ definitions:
     - value
 
   # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Queries & Headers                                                   ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  query-map:
+    title: Query Parameters
+    type: array
+    items:
+      type: object
+      properties:
+        name:        { type: string }
+        summary:     { type: string }
+        description: { type: string }
+        value:       { $ref: "#/definitions/type-reference" }
+      required:
+      - name
+      - value
+
+  header-map:
+    title: Headers
+    type: array
+    items:
+      type: object
+      properties:
+        header:      { type: string }
+        summary:     { type: string }
+        description: { type: string }
+        value:       { $ref: "#/definitions/type-reference" }
+      required:
+      - header
+      - value
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
   # ┃  Requests                                                            ┃ #
   # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
 
@@ -236,17 +268,46 @@ definitions:
     title: HTTP Request Without Body
     type: object
     properties:
-      headers: { }
-      query: { }
+      headers: { $ref: "#/definitions/header-map" }
+      query:   { $ref: "#/definitions/query-map"  }
 
   request-with-body:
     title: HTTP Request With Body
     allOf:
     - $ref: "#/definitions/request-no-body"
     - properties:
-        body: { }
+        body: { $ref: "#/definitions/request-mime-map" }
       required:
       - body
+
+  request-mime-map:
+    title: Request MimeType Map
+    description: Map of media types to the request body definitions.
+    type: object
+    properties:
+      "application/gzip":
+        $ref: "#/definitions/request-content"
+      "application/json":
+        $ref: "#/definitions/request-content"
+      "application/ld+json":
+        $ref: "#/definitions/request-content"
+      "application/octet-stream":
+        $ref: "#/definitions/request-content"
+      "application/xml":
+        $ref: "#/definitions/request-content"
+      "application/zip":
+        $ref: "#/definitions/request-content"
+      "text/csv":
+        $ref: "#/definitions/request-content"
+      "text/html":
+        $ref: "#/definitions/request-content"
+      "text/plain":
+        $ref: "#/definitions/request-content"
+    patternProperties:
+      ^[a-z]+/[\w\d\-.+]+$:
+        $ref: "#/definitions/request-content"
+
+  request-content: {}
 
   # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
   # ┃  Responses                                                           ┃ #
