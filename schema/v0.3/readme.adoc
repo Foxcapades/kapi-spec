@@ -18,9 +18,14 @@
 = KAPI Specification
 :revnumber: 0.3
 :author: Elizabeth Paige Harper
-:toc: preamble
+:toc: macro
+:toc-title:
 
 TODO: define me!
+
+== Table of Contents
+
+toc::[]
 
 == Random Thoughts to be Organized
 
