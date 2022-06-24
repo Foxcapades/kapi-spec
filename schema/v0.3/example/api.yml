@@ -5,6 +5,9 @@ info:
   title: Example API
   version: 1.0.0
 
+imports:
+  err: includes/errors.yml
+
 routes:
   /api:
     get:
@@ -20,56 +23,49 @@ routes:
           summary: Server Error
           content:
             application/json:
-              value:
-                type: decimal
-                examples:
-                - value: 3
+              value: err.ServerError
+  /health:
+    get:
+      summary: Service Health Info
+      responses:
+        200:
+          summary: Success
+          content:
+            application/json:
+              value: ServiceHealthInfo
+
+
 
 
 components:
   types:
-    - name: CustomBoolean
-      base: boolean
+  - name: ServiceHealthInfo
+    base: object
+    properties:
+      serviceName: string
+      serviceVersion: string
+      serviceHealth: ServiceHealthStatus
+      dependencies:
+        type: list
+        values: DependencyHealthInfo
 
-    - name: CustomDate
-      base: date
-      format: datetime-tz
+  - name: DependencyHealthInfo
+    base: object
+    properties:
+      dependencyName: string
+      dependencyStatus: DependencyStatus
 
-    - name: CustomDecimal
-      base: decimal
-      format: float64
-      iMin: 21.0
-      eMax: 22.0
+  - name: ServiceHealthStatus
+    base: enum
+    wraps: string
+    values:
+      Healthy: healthy
+      Unhealthy: unhealthy
 
-    - name: CustomInteger
-      base: integer
-      format: uint32
-      eMin: 0
-      iMax: 1000000
-
-    - name: CustomObject
-      base: object
-      properties:
-        anArray1:
-          type: array
-          values: CustomBoolean
-        anArray2:
-          type: array
-          values:
-            type: CustomDate
-            nullable: true
-        aBoolean:
-          type: CustomBoolean
-          required: false
-        aDate:
-          type: CustomDate
-          nullable: true
-        aDecimal: CustomDecimal
-        anInteger: CustomInteger
-        aString: CustomString
-
-    - name: CustomString
-      base: string
-      pattern: ^[\w\d]+$
-      minLength: 10
-      maxLength: 32
+  - name: DependencyStatus
+    base: enum
+    wraps: string
+    values:
+      Healthy: healthy
+      Unknown: unknown
+      Unreachable: unreachable

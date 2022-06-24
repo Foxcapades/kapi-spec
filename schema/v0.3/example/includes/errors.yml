@@ -2,4 +2,56 @@ kapi: v0.3
 type: library
 components:
   types:
-  -
+  - name: BadRequestError
+    summary: Bad Request Error
+    base: object
+    properties:
+      code:
+        type: integer
+        const: 400
+      message:
+        type: string
+
+  - name: UnauthorizedError
+    summary: Unauthorized Error
+    base: object
+    properties:
+      code:
+        type: integer
+        const: 401
+      message:
+        type: string
+        required: false
+
+  - name: ForbiddenError
+    summary: Forbidden Error
+    base: object
+    properties:
+      code:
+        type: integer
+        const: 403
+      message:
+        type: string
+        required: false
+
+  - name: NotFoundError
+    summary: Not Found Error
+    base: object
+    properties:
+      code:
+        type: integer
+        const: 404
+      message:
+        type: string
+        required: false
+
+  - name: ServerError
+    summary: Internal Server Error
+    base: object
+    properties:
+      code:
+        type: integer
+        const: 500
+      message:
+        type: string
+

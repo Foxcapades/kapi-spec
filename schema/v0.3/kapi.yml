@@ -111,7 +111,7 @@ definitions:
     properties:
       types:
         type: array
-        items: {}
+        items: { $ref: "#/definitions/type-definition" }
     required:
     - types
 
@@ -560,6 +560,8 @@ definitions:
   # ┃  Builtin Types                                                       ┃ #
   # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
 
+  # region Builtin Types
+
   type-simple:
     title: Simple Builtin Types
     enum:
@@ -576,6 +578,8 @@ definitions:
     - list
     - map
     - set
+
+  # endregion Builtin Types
 
   # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
   # ┃  Type References                                                     ┃ #
@@ -606,6 +610,7 @@ definitions:
     - $ref: "#/definitions/type-ref-decimal"
     - $ref: "#/definitions/type-ref-integer"
     - $ref: "#/definitions/type-ref-map"
+    - $ref: "#/definitions/type-ref-string"
 
   type-ref-expanded-base:
     description: Expanded type reference base property definitions.
@@ -614,6 +619,8 @@ definitions:
       nullable:
         type: boolean
         default: false
+    required:
+    - type
 
   type-ref-boolean:
     title: Boolean Type Ref
@@ -623,12 +630,11 @@ definitions:
       properties:
         type:    { enum: [ boolean ] }
         default: { type: boolean }
+        const:   { type: boolean }
         example: { type: boolean }
         examples:
           type: array
           items: { $ref: "#/definitions/example-boolean" }
-      required:
-      - type
 
   type-ref-date:
     title: Date Type Ref
@@ -641,6 +647,7 @@ definitions:
       - properties:
           format: { enum: [ date ] }
           default: { $ref: "#/definitions/date-string-date" }
+          const: { $ref: "#/definitions/date-string-date" }
           example: { $ref: "#/definitions/date-string-date" }
           examples:
             type: array
@@ -648,6 +655,7 @@ definitions:
       - properties:
           format: { enum: [ time ] }
           default: { $ref: "#/definitions/date-string-time" }
+          const: { $ref: "#/definitions/date-string-time" }
           example: { $ref: "#/definitions/date-string-time" }
           examples:
             type: array
@@ -655,6 +663,7 @@ definitions:
       - properties:
           format: { enum: [ datetime ] }
           default: { $ref: "#/definitions/date-string-datetime" }
+          const: { $ref: "#/definitions/date-string-datetime" }
           example: { $ref: "#/definitions/date-string-datetime" }
           examples:
             type: array
@@ -662,6 +671,7 @@ definitions:
       - properties:
           format: { enum: [ datetime-tz ] }
           default: { $ref: "#/definitions/date-string-datetime-tz" }
+          const: { $ref: "#/definitions/date-string-datetime-tz" }
           example: { $ref: "#/definitions/date-string-datetime-tz" }
           examples:
             type: array
@@ -675,12 +685,11 @@ definitions:
       properties:
         type:    { enum: [ decimal ] }
         default: { type: number }
+        const: { type: number }
         example: { type: number }
         examples:
           type: array
           items: { $ref: "#/definitions/example-decimal" }
-      required:
-      - type
 
   type-ref-integer:
     title: Integer Type Ref
@@ -690,12 +699,30 @@ definitions:
       properties:
         type:    { enum: [ integer ] }
         default: { type: integer }
+        const: { type: integer }
         example: { type: integer }
         examples:
           type: array
           items: { $ref: "#/definitions/example-integer" }
-      required:
-      - type
+
+  type-ref-string:
+    title: Integer Type Ref
+    allOf:
+    - $ref: "#/definitions/type-ref-expanded-base"
+    - type: object
+      properties:
+        type:    { enum: [ string ] }
+        default: { type: string }
+        const: { type: string }
+        example: { type: string }
+        examples:
+          type: array
+          items: { $ref: "#/definitions/example-string" }
+
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Complex Type References                                             ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
 
   type-ref-map:
     title: Map Type Ref
@@ -707,7 +734,6 @@ definitions:
         keys:   { $ref: "#/definitions/type-reference" }
         values: { $ref: "#/definitions/type-reference" }
       required:
-      - type
       - keys
       - values
 
@@ -722,9 +748,8 @@ definitions:
           - list
           - set
         values: { $ref: "#/definitions/type-reference" }
-    required:
-    - type
-    - values
+      required:
+      - values
 
 
   # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
@@ -738,7 +763,9 @@ definitions:
       - $ref: "#/definitions/type-def-boolean"
       - $ref: "#/definitions/type-def-date"
       - $ref: "#/definitions/type-def-decimal"
+      - $ref: "#/definitions/type-def-enum"
       - $ref: "#/definitions/type-def-integer"
+      - $ref: "#/definitions/type-def-object"
       - $ref: "#/definitions/type-def-string"
 
   type-def-base:
@@ -752,52 +779,31 @@ definitions:
         type: string
     required:
     - name
+    - base
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Scalar Type Definitions                                             ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  # region Scalar Type Definitions
 
   type-def-boolean:
     type: object
     properties:
-      base:
-        enum:
-        - boolean
-    required:
-    - base
+      base: { enum: [ boolean ] }
 
   type-def-date:
     type: object
     properties:
-      base:
-        enum:
-        - date
-      format:
-        $ref: "#/definitions/date-format"
-    required:
-    - base
-
-  type-def-enum: { }
-
-  type-def-enum-plain:
-    type: object
-    properties:
-      base:
-        enum:
-        - none
-    required:
-    - base
-
-  type-def-enum-boolean: { }
-  type-def-enum-decimal: { }
-  type-def-enum-integer: { }
-  type-def-enum-string: { }
+      base:   { enum: [ date ] }
+      format: { $ref: "#/definitions/date-format" }
 
   type-def-decimal:
     title: Decimal Based Type Definition
     type: object
     properties:
-      base:
-        enum:
-        - decimal
-      format:
-        $ref: "#/definitions/decimal-format"
+      base:   { enum: [ decimal ] }
+      format: { $ref: "#/definitions/decimal-format" }
       eMax:
         title: Exclusive Maximum
         type: number
@@ -810,18 +816,13 @@ definitions:
       iMin:
         title: Inclusive Minimum
         type: number
-    required:
-    - base
 
   type-def-integer:
     title: Integer Based Type Definition
     type: object
     properties:
-      base:
-        enum:
-        - integer
-      format:
-        $ref: "#/definitions/decimal-format"
+      base:   { enum: [ integer ] }
+      format: { $ref: "#/definitions/integer-format" }
       eMax:
         title: Exclusive Maximum
         type: integer
@@ -834,31 +835,168 @@ definitions:
       iMin:
         title: Inclusive Minimum
         type: integer
-    required:
-    - base
-
-  type-def-object: {}
-
-  type-def-object-prop: {}
 
   type-def-string:
     title: String Based Type Definition
     type: object
     properties:
-      base:
-        enum:
-        - string
+      base: { enum: [ string ] }
       pattern:
         type: string
         format: regex
       minLength:
+        title: Minimum String Length
+        description: | 
+          Must be greater than or equal to `0`.
+          
+          If `maxLength` is defined, this value must be less than or equal to
+          `maxLength`.
         type: integer
         minimum: 0
+        default: 0
       maxLength:
+        title: Maximum String Length
+        description: |
+          If `minLength` is defined, this value must be greater than or equal
+          to `minLength`.
+          
+          If `minLength` is not defined, this value must be greater than or
+          equal to `0`.
         type: integer
         minimum: 0
+
+  # endregion Scalar Type Definitions
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Object Type Definitions                                             ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  # Object property name regex: ^[a-z][\w\d]*$
+  #
+  # Object property names must begin with a lowercase letter character, however
+  # this property name may be different in the generated code based on the rules
+  # of the target language.  For example, Go property names will have their
+  # first letter capitalized in the generated Go source code.
+
+  type-def-object:
+    title: Custom Object Type Definition
+    type: object
+    properties:
+      base: { enum: [ object ] }
+      extends:
+        title: Parent Type
+        description: |
+          Defines the object type that this new type definition extends.
+          
+          The type declared here must be the name of another custom object
+          definition.
+          
+          Custom object types cannot extend new-types wrapping scalar values.
+        oneOf:
+        - $ref: "#/definitions/type-name-import"
+        - $ref: "#/definitions/type-name"
+      properties:
+        type: object
+        patternProperties:
+          ^[a-z][\w\d]*$:
+            $ref: "#/definitions/type-def-object-prop"
+        minProperties: 1
+        additionalProperties: false
+
+  type-def-object-prop:
+    title: Custom Object Property
+    allOf:
+    - $ref: "#/definitions/type-reference"
+    - properties:
+        required:
+          type: boolean
+          default: true
+
+  # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
+  # ┃  Enum Type Definitions                                               ┃ #
+  # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ #
+
+  # Enum Value Name Regex: ^[A-Z][\w\d]*$
+
+  type-def-enum-base:
+    type: object
+    properties:
+      base: { enum: [ enum ] }
     required:
     - base
+    - wraps
+    - values
+
+  enum-value-name:
+    type: string
+    pattern: ^[A-Z][\w\d]*$
+
+  type-def-enum:
+    allOf:
+    - $ref: "#/definitions/type-def-base"
+    - $ref: "#/definitions/type-def-enum-base"
+    - oneOf:
+      - $ref: "#/definitions/type-def-enum-plain"
+      - $ref: "#/definitions/type-def-enum-boolean"
+      - $ref: "#/definitions/type-def-enum-decimal"
+      - $ref: "#/definitions/type-def-enum-integer"
+      - $ref: "#/definitions/type-def-enum-string"
+
+  type-def-enum-plain:
+    type: object
+    properties:
+      wraps: { enum: [ none ] }
+      values:
+        type: array
+        items: { $ref: "#/definitions/enum-value-name" }
+        minItems: 1
+
+  type-def-enum-boolean:
+    type: object
+    properties:
+      wraps: { enum: [ boolean ] }
+      values:
+        type: object
+        patternProperties:
+          ^[A-Z][\w\d]*$:
+            type: boolean
+        minProperties: 1
+
+  type-def-enum-decimal:
+    type: object
+    properties:
+      wraps: { enum: [ decimal ] }
+      format: { $ref: "#/definitions/decimal-format" }
+      values:
+        type: object
+        patternProperties:
+          ^[A-Z][\w\d]*$:
+            type: number
+        minProperties: 1
+
+  type-def-enum-integer:
+    type: object
+    properties:
+      wraps: { enum: [ integer ] }
+      format: { $ref: "#/definitions/integer-format" }
+      values:
+        type: object
+        patternProperties:
+          ^[A-Z][\w\d]*$:
+            type: integer
+        minProperties: 1
+
+  type-def-enum-string:
+    type: object
+    properties:
+      wraps: { enum: [ string ] }
+      values:
+        type: object
+        patternProperties:
+          ^[A-Z][\w\d]*$:
+            type: string
+        minProperties: 1
+
 
   # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
   # ┃  Type Extras                                                         ┃ #
