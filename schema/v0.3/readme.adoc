@@ -38,7 +38,7 @@ KAPI code generation tools.
 
 === Numbers
 
-==== Integers
+==== Integer
 
 ===== Type Mappings
 
@@ -96,5 +96,48 @@ KAPI code generation tools.
 | uint32 | uint32  | *uint32
 | uint64 | uint64  | *uint64
 | big    | big.Int | *big.Int
+|===
+====
+
+==== Decimal
+
+===== Type Mappings
+
+.Java
+[%collapsible]
+====
+[%header, cols="1m,1m,1m"]
+|===
+| Format  | Java Type  | Nullable Java Type
+| (none)  | double     | Double
+| float32 | float      | Float
+| float64 | double     | Double
+| big     | BigDecimal | BigDecimal
+|===
+====
+
+.Kotlin
+[%collapsible]
+====
+[%header, cols="1m,1m,1m"]
+|===
+| Format  | Kotlin Type | Nullable Kotlin Type
+| (none)  | Double      | Double?
+| float32 | Float       | Float?
+| float64 | Double      | Double?
+| big     | BigDecimal  | BigDecimal
+|===
+====
+
+.Go
+[%collapsible]
+====
+[%header, cols="1m,1m,1m"]
+|===
+| Format  | Go Type   | Nullable Go Type
+| (none)  | float64   | *float64
+| float32 | float32   | *float32
+| float64 | float64   | *float64
+| big     | big.Float | *big.Float
 |===
 ====
