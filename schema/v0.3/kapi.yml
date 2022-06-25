@@ -283,17 +283,23 @@ definitions:
     title: HTTP Request Without Body
     type: object
     properties:
-      headers: { $ref: "#/definitions/header-map" }
-      query:   { $ref: "#/definitions/query-map"  }
+      summary:
+        type: string
+      description:
+        type: string
+      headers:
+        $ref: "#/definitions/header-map"
+      query:
+        $ref: "#/definitions/query-map"
 
   request-with-body:
     title: HTTP Request With Body
     allOf:
     - $ref: "#/definitions/request-no-body"
     - properties:
-        body: { $ref: "#/definitions/request-mime-map" }
+        content: { $ref: "#/definitions/request-mime-map" }
       required:
-      - body
+      - content
 
   request-mime-map:
     title: Request MimeType Map
@@ -322,7 +328,18 @@ definitions:
       ^[a-z]+/[\w\d\-.+]+$:
         $ref: "#/definitions/request-content"
 
-  request-content: {}
+  request-content:
+    title: Request Content
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+      value:
+        $ref: "#/definitions/type-reference"
+    required:
+    - value
 
   # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ #
   # ┃  Responses                                                           ┃ #
@@ -651,8 +668,10 @@ definitions:
     title: Complex Builtin Types
     enum:
     - array
+    - enum
     - list
     - map
+    - object
     - set
 
   # endregion Builtin Types
