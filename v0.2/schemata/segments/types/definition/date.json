@@ -5,7 +5,7 @@
   "properties": {
     "name":     { "$ref": "../../../common/type-name.json" },
     "base":     { "enum": [ "datetime" ]                   },
-    "format":   { "$ref": "../datetime-format.json"        },
+    "format":   { "$ref": "../datetime-format.json" },
     "example":  { "$ref": "../examples/date-example.json" },
     "examples": { "$ref": "../examples/date-example-map.json" }
   },

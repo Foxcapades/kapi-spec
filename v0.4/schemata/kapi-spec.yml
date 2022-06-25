@@ -1,0 +1,193 @@
+$schema: https://json-schema.org/draft-07/schema
+
+oneOf:
+- $ref: "#/definitions/document-api"
+- $ref: "#/definitions/document-library"
+
+definitions:
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Documents                                                          | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  document-api:
+    type: object
+    properties:
+      kapi:    { $ref: "#/definitions/seg-kapi-version" }
+      type:    { enum: [ api ] }
+      info:    { $ref: "#/definitions/seg-info" }
+      imports: { $ref: "#/definitions/seg-imports" }
+      routes: { }
+      components: { }
+    required:
+    - kapi
+    - type
+    - info
+    additionalProperties: false
+
+  document-library:
+    type: object
+    properties:
+      kapi: { $ref: "#/definitions/seg-kapi-version" }
+      type: { enum: [ library ] }
+      components: { }
+    required:
+    - kapi
+    - type
+    - components
+    additionalProperties: false
+
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Document Segments                                                  | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  # +----------------------------------------------------------------------+ #
+  # |   Segment: KAPI Version                                              | #
+  # +----------------------------------------------------------------------+ #
+
+  seg-kapi-version:
+    title: KAPI Version
+    type: string
+    enum:
+    - v0.4
+
+
+  # +----------------------------------------------------------------------+ #
+  # |   Segment: Imports                                                   | #
+  # +----------------------------------------------------------------------+ #
+
+  seg-imports:
+    title: Import Definitions
+    description: |
+      The imports block is where dependence on external files are declared and
+      prefixes for using the components defined.
+    type: object
+    patternProperties:
+      ^[a-z][\w\d]*$:
+        oneOf:
+        - $ref: "#/definitions/path-remote"
+        - $ref: "#/definitions/path-local"
+    additionalProperties: false
+
+  path-local:
+    title: Local Path
+    description: |
+      Path to a local file or file location relative to the location of the
+      current document.
+    type: string
+    pattern: ^/?[^/\n]+(?:/[^/\n]+)*$
+    examples:
+    - /foo/bar
+    - fizz/buzz
+    - ../my/schema.yml
+
+  path-remote:
+    title: Remote URI
+    description: |
+      URI of a remote file.
+    type: string
+    pattern: ^[a-zA-Z][a-zA-Z\d\-+.]*://[\w\d\-.~:/?#\[\]@!$&'()*+,;=%]+$
+    examples:
+    - ftp://my.site/path/to/my/file
+    - http://something/path/to?file=mine
+    - https://foo:bar@fizz.buzz:8080/some_file
+
+  # +----------------------------------------------------------------------+ #
+  # |   Segment: Info                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  seg-info:
+    type: object
+    properties:
+      title:
+        title: API Title
+        type: string
+      summary:
+        title: API Summary
+        description: Brief, human friendly summary or tagline for the API.
+        type: string
+      description:
+        title: API Description
+        description: |
+          Long description of the API and what it does.
+          
+          Markdown is supported.
+        type: string
+      version:
+        title: API Version
+        type:
+        - string
+        - number
+    required:
+    - title
+    - version
+
+
+
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type Definitions                                                   | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  type-name:
+    type: string
+    pattern: ^\w[\w\d]*$
+
+  type-definition:
+    allOf:
+    - $ref: "#/definitions/type-def-base-props"
+    - oneOf:
+
+
+  type-def-base-props:
+    type: object
+    properties:
+      name:
+        $ref: "#/definitions/type-name"
+    required:
+    - name
+
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type Referencing                                                   | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  # TODO: Add `any` type reference.
+
+  type-reference:
+    oneOf:
+    - $ref: "#/definitions/type-ref-inline"
+    - $ref: "#/definitions/type-ref-expanded"
+
+  type-ref-inline:
+    anyOf:
+    - $ref: types/array.yml#definitions/array-ref-inline
+    - $ref: types/boolean.yml#definitions/boolean-ref-inline
+    - $ref: types/date.yml#definitions/date-ref-inline
+    - $ref: types/decimal.yml#definitions/decimal-ref-inline
+    - $ref: types/integer.yml#definitions/integer-ref-inline
+    - $ref: types/list.yml#definitions/list-ref-inline
+    - $ref: types/map.yml#definitions/map-ref-inline
+    - $ref: types/set.yml#definitions/set-ref-inline
+    - $ref: types/string.yml#definitions/string-ref-inline
+
+  type-ref-expanded:
+    oneOf:
+    - $ref: types/array.yml#definitions/array-ref-expanded
+    - $ref: types/boolean.yml#definitions/boolean-ref-expanded
+    - $ref: types/date.yml#definitions/date-ref-expanded
+    - $ref: types/decimal.yml#definitions/decimal-ref-expanded
+    - $ref: types/integer.yml#definitions/integer-ref-expanded
+    - $ref: types/list.yml#definitions/list-ref-expanded
+    - $ref: types/map.yml#definitions/map-ref-expanded
+    - $ref: types/set.yml#definitions/set-ref-expanded
+    - $ref: types/string.yml#definitions/string-ref-expanded

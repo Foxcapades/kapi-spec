@@ -6,7 +6,7 @@
     "^[a-z][\\w\\d\\-]*$": {
       "oneOf": [
         { "$ref": "../common/remote-path.json" },
-        { "$ref": "../common/local-path.json"  }
+        { "$ref": "../common/local-path.json" }
       ]
     }
   },

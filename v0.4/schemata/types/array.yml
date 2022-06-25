@@ -1,0 +1,52 @@
+$schema: https://json-schema.org/draft-07/schema
+
+definitions:
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Array                                                        | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  array-base:
+    type: object
+    properties:
+      type:        { enum: [ array ] }
+      summary:     { type: string }
+      description: { type: string }
+      values:      { $ref: "#/definitions/type-reference" }
+    required:
+    - type
+    - values
+
+  array-ref-inline:
+    title: Inline Set Type Reference
+    type: string
+    pattern: ^array\[(\w[\w\d\[\], ?]*\??)\]\??$
+
+  array-ref-expanded:
+    title: Expanded Set Type Reference
+    allOf:
+    - $ref: "#/definitions/array-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  array-property:
+    title: Set Object Property
+    allOf:
+    - $ref: "#/definitions/array-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  array-example:
+    type: object
+    properties:
+      value:       { type: array }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value

@@ -1,0 +1,81 @@
+$schema: https://json-schema.org/draft-07/schema
+
+definitions:
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Integer                                                      | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  integer-base:
+    description: |
+      Properties common to all integer type definitions or expanded integer type
+      references.
+    type: object
+    properties:
+      type: { enum: [ integer ] }
+      format:
+        enum:
+        - int8
+        - int16
+        - int32
+        - int64
+        - uint8
+        - uint16
+        - uint32
+        - uint64
+        - big
+        default: int32
+      summary:
+        title: Type Summary
+        description: Short description of the type being defined.
+        type: string
+      description:
+        title: Type Description
+        description: Long description or help text for the type being defined.
+        type: string
+      iMin:    { type: integer }
+      iMax:    { type: integer }
+      eMin:    { type: integer }
+      eMax:    { type: integer }
+      example: { type: integer }
+      examples:
+        type:  array
+        items: { $ref: "#/definitions/integer-example" }
+    required:
+    - type
+
+  integer-ref-inline:
+    enum:
+    - integer
+    - integer?
+
+  integer-ref-expanded:
+    title: Extended Integer Type Reference
+    allOf:
+    - $ref: "#/definitions/integer-base"
+    - properties:
+        default: { type: integer }
+        nullable:
+          type: boolean
+          default: false
+
+  integer-property:
+    title: Integer Object Property
+    allOf:
+    - $ref: "#/definitions/integer-base"
+    - properties:
+        default: { type: integer }
+        nullable:
+          type: boolean
+          default: false
+
+  integer-example:
+    type: object
+    properties:
+      value:       { type: integer }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value

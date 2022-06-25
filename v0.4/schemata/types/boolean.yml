@@ -1,0 +1,59 @@
+$schema: https://json-schema.org/draft-07/schema
+
+definitions:
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Boolean                                                      | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  boolean-base:
+    description: |
+      Properties common to all boolean type definitions or expanded boolean type
+      references.
+    type: object
+    properties:
+      type:        { enum: [ boolean ] }
+      summary:     { type: string }
+      description: { type: string }
+      example:     { type: boolean }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/example-boolean" }
+    required:
+    - type
+
+  boolean-ref-inline:
+    enum:
+    - boolean
+    - boolean?
+
+  boolean-ref-expanded:
+    allOf:
+    - $ref: "#/definitions/boolean-base"
+    - properties:
+        default:
+          type: boolean
+        nullable:
+          type: boolean
+          default: false
+
+  boolean-property:
+    allOf:
+    - $ref: "#/definitions/boolean-base"
+    - properties:
+        default:
+          type: boolean
+        nullable:
+          type: boolean
+          default: false
+
+  example-boolean:
+    type: object
+    properties:
+      value:       { type: boolean }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value

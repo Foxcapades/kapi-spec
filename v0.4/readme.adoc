@@ -1,20 +1,3 @@
-////
-    KAPI API Specification
-    Copyright (C) 2021 Elizabeth Paige Harper
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-////
 = KAPI Specification
 :revnumber: 0.4
 :author: Elizabeth Paige Harper
@@ -66,3 +49,78 @@ collection and map types must follow one of these patterns:
 * `set[date?]`
 * `set[decimal]?`
 * `set[integer?]?`
+
+
+== Types
+
+=== Builtin Types
+
+* array
+* boolean
+* date
+* decimal
+* enum
+* integer
+* list
+* map
+* object
+* set
+* string
+
+
+=== Using Types
+
+==== Shorthand
+
+==== Longform
+
+=== Defining Custom Types
+
+==== Enums
+
+[source, yaml]
+----
+name: MyObjectKind
+wraps: string
+values:
+  Kind1: kind-1
+  Kind2: kind-2
+----
+
+==== Objects
+
+[source, yaml]
+----
+name: MyObjectType
+type: object
+typeHintField: kind
+properties:
+  kind: MyObjectKind
+  name: string
+  date:
+    type: date
+    format: datetime
+  nullableField: integer?
+----
+
+[source, yaml]
+----
+name: MySubObjectType
+type: object
+extends: MyObjectType
+typeHintValue: Kind1
+properties:
+  mapField:
+    summary: Map of strings
+    type: map[string, string]
+  listField:
+    summary: List of nullable string values
+    type: list[string?]
+  setField:
+    summary: Nullable set of non-nullable string values
+    type: set[string]?
+  arrayField:
+    summary: Nullable array of nullable string values
+    type: array[string?]?
+----
+
