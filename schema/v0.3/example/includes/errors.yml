@@ -2,56 +2,52 @@ kapi: v0.3
 type: library
 components:
   types:
-  - name: BadRequestError
-    summary: Bad Request Error
-    base: object
+  - name: APIErrorCode
+    type: enum
+    wraps: integer
+    format: uint16
+    values:
+      BadRequest: 400
+      Unauthorized: 401
+      Forbidden: 403
+      NotFound: 404
+      Server: 500
+
+  - name: APIError
+    type: object
+    typeHintField: code
     properties:
-      code:
-        type: integer
-        const: 400
+      code: APIErrorCode
       message:
         type: string
+        required: false
+
+  - name: BadRequestError
+    type: object
+    extends: APIError
+    typeHintValue: BadRequest
+    properties:
+      message: string # Override parent field definition to make the field required
 
   - name: UnauthorizedError
-    summary: Unauthorized Error
-    base: object
-    properties:
-      code:
-        type: integer
-        const: 401
-      message:
-        type: string
-        required: false
+    type: object
+    extends: APIError
+    typeHintValue: Unauthorized
 
   - name: ForbiddenError
-    summary: Forbidden Error
-    base: object
-    properties:
-      code:
-        type: integer
-        const: 403
-      message:
-        type: string
-        required: false
+    type: object
+    extends: APIError
+    typeHintValue: Forbidden
 
   - name: NotFoundError
-    summary: Not Found Error
-    base: object
-    properties:
-      code:
-        type: integer
-        const: 404
-      message:
-        type: string
-        required: false
+    type: object
+    extends: APIError
+    typeHintValue: NotFound
 
   - name: ServerError
-    summary: Internal Server Error
-    base: object
+    type: object
+    extends: APIError
+    typeHintValue: Server
     properties:
-      code:
-        type: integer
-        const: 500
-      message:
-        type: string
+      message: string # Override parent field definition to make the field required
 

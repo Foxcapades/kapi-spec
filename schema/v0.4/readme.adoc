@@ -1,0 +1,68 @@
+////
+    KAPI API Specification
+    Copyright (C) 2021 Elizabeth Paige Harper
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+////
+= KAPI Specification
+:revnumber: 0.4
+:author: Elizabeth Paige Harper
+:toc: macro
+:toc-title:
+
+== Active Notes
+
+unorganized development notes for this rough draft.
+
+=== Inline Type References
+
+simple and custom type names will be just the type name followed by an optional
+`?` character to indicate nullability.
+
+.Examples
+* `boolean`
+* `boolean?`
+* `date`
+* `date?`
+* `decimal`
+* `decimal?`
+* `integer`
+* `integer?`
+* `string`
+* `string?`
+
+collection and map types must follow one of these patterns:
+
+* array: `+^array\[(\w[\w\d]*\??)\]\??$+`
+* list: `+^list\[(\w[\w\d]*\??)\]\??$+`
+* map: `+^map\[(\w[\w\d]*), ?(\w[\w\d]*\??)\]\??$+`
+* set: `+^set\[(\w[\w\d]*\??)\]\??$+`
+
+.Examples
+* `array[boolean]`
+* `array[date?]`
+* `array[decimal]?`
+* `array[integer?]?`
+* `list[boolean]`
+* `list[date?]`
+* `list[decimal]?`
+* `list[integer?]?`
+* `map[string, boolean]`
+* `map[integer, date?]`
+* `map[MyType, decimal]?`
+* `map[string, integer?]?`
+* `set[boolean]`
+* `set[date?]`
+* `set[decimal]?`
+* `set[integer?]?`

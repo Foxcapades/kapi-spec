@@ -50,6 +50,8 @@ KAPI code generation tools.
 
 === Dates
 
+* default date type is `datetime-tz`
+
 ==== Formats
 
 .Format Definitions

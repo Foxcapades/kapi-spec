@@ -7,6 +7,7 @@ info:
 
 imports:
   err: includes/errors.yml
+  health: includes/health.yml
 
 routes:
   /api:
@@ -32,37 +33,31 @@ routes:
           summary: Success
           content:
             application/json:
-              value: ServiceHealthInfo
+              value: health.ServiceHealthInfo
+  /users:
+    get:
+      summary: User List
+      responses:
+        200:
+          summary: Success
+          content:
+            application/json:
+              value:
 
 components:
   types:
-  - name: ServiceHealthInfo
-    base: object
+  - name: User
+    type: object
     properties:
-      serviceName: string
-      serviceVersion: string
-      serviceHealth: ServiceHealthStatus
-      dependencies:
-        type: list
-        values: DependencyHealthInfo
+      userId:
+        type: integer
+        format: uint64
+      username:
+        type: string
+        minLength: 3
+        maxLength: 64
+      created:
+        type: date
+        format: datetime-tz
 
-  - name: DependencyHealthInfo
-    base: object
-    properties:
-      dependencyName: string
-      dependencyStatus: DependencyStatus
 
-  - name: ServiceHealthStatus
-    base: enum
-    wraps: string
-    values:
-      Healthy: healthy
-      Unhealthy: unhealthy
-
-  - name: DependencyStatus
-    base: enum
-    wraps: string
-    values:
-      Healthy: healthy
-      Unknown: unknown
-      Unreachable: unreachable
