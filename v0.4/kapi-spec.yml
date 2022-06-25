@@ -1,0 +1,1039 @@
+$schema: https://json-schema.org/draft-07/schema
+
+oneOf:
+- $ref: "#/definitions/document-api"
+- $ref: "#/definitions/document-library"
+
+definitions:
+
+  # region KAPI Document Definitions
+  # +--------------------------------------------------------------------------------------------------------------+ #
+  # |                                                                                                              | #
+  # |                                                                                                              | #
+  # |   KAPI Document Definitions                                                                                  | #
+  # |                                                                                                              | #
+  # |                                                                                                              | #
+  # +--------------------------------------------------------------------------------------------------------------+ #
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Document Types                                                     | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  document-api:
+    type: object
+    properties:
+      kapi:    { $ref: "#/definitions/seg-kapi-version" }
+      type:    { enum: [ api ] }
+      info:    { $ref: "#/definitions/seg-info" }
+      imports: { $ref: "#/definitions/seg-imports" }
+      routes: { }
+      components: { }
+    required:
+    - kapi
+    - type
+    - info
+    additionalProperties: false
+
+  document-library:
+    type: object
+    properties:
+      kapi: { $ref: "#/definitions/seg-kapi-version" }
+      type: { enum: [ library ] }
+      components: { }
+    required:
+    - kapi
+    - type
+    - components
+    additionalProperties: false
+
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Document Segments                                                  | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  # +----------------------------------------------------------------------+ #
+  # |   Segment: KAPI Version                                              | #
+  # +----------------------------------------------------------------------+ #
+
+  seg-kapi-version:
+    title: KAPI Version
+    type: string
+    enum:
+    - v0.4
+
+  # +----------------------------------------------------------------------+ #
+  # |   Segment: Imports                                                   | #
+  # +----------------------------------------------------------------------+ #
+
+  seg-imports:
+    title: Import Definitions
+    description: |
+      The imports block is where dependence on external files are declared and
+      prefixes for using the components defined.
+    type: object
+    patternProperties:
+      ^[a-z][\w\d]*$:
+        oneOf:
+        - $ref: "#/definitions/path-remote"
+        - $ref: "#/definitions/path-local"
+    additionalProperties: false
+
+  path-local:
+    title: Local Path
+    description: |
+      Path to a local file or file location relative to the location of the
+      current document.
+    type: string
+    pattern: ^/?[^/\n]+(?:/[^/\n]+)*$
+    examples:
+    - /foo/bar
+    - fizz/buzz
+    - ../my/schema.yml
+
+  path-remote:
+    title: Remote URI
+    description: |
+      URI of a remote file.
+    type: string
+    pattern: ^[a-zA-Z][a-zA-Z\d\-+.]*://[\w\d\-.~:/?#\[\]@!$&'()*+,;=%]+$
+    examples:
+    - ftp://my.site/path/to/my/file
+    - http://something/path/to?file=mine
+    - https://foo:bar@fizz.buzz:8080/some_file
+
+  # +----------------------------------------------------------------------+ #
+  # |   Segment: Info                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  seg-info:
+    type: object
+    properties:
+      title:
+        title: API Title
+        type: string
+      summary:
+        title: API Summary
+        description: Brief, human friendly summary or tagline for the API.
+        type: string
+      description:
+        title: API Description
+        description: |
+          Long description of the API and what it does.
+          
+          Markdown is supported.
+        type: string
+      version:
+        title: API Version
+        type:
+        - string
+        - number
+    required:
+    - title
+    - version
+
+  # endregion KAPI Document Definitions
+
+
+  # region KAPI HTTP Definitions
+  # +--------------------------------------------------------------------------------------------------------------+ #
+  # |                                                                                                              | #
+  # |                                                                                                              | #
+  # |   KAPI HTTP Definitions                                                                                      | #
+  # |                                                                                                              | #
+  # |                                                                                                              | #
+  # +--------------------------------------------------------------------------------------------------------------+ #
+
+  route: {}
+
+  route-with-params: {}
+
+  request: {}
+
+  request-with-body: {}
+
+  response: {}
+
+  # endregion KAPI HTTP Definitions
+
+
+  # region KAPI Types Schemata
+  # +--------------------------------------------------------------------------------------------------------------+ #
+  # |                                                                                                              | #
+  # |                                                                                                              | #
+  # |   KAPI Types Schemata                                                                                        | #
+  # |                                                                                                              | #
+  # |                                                                                                              | #
+  # +--------------------------------------------------------------------------------------------------------------+ #
+
+  # region Type Meta
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type Meta                                                          | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  type-name:
+    type: string
+    pattern: ^\w[\w\d]*$
+
+  # endregion Type Meta
+
+  # region Type Referencing
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type Referencing                                                   | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  type-reference:
+    oneOf:
+    - $ref: "#/definitions/type-ref-inline"
+    - $ref: "#/definitions/type-ref-expanded"
+
+  type-ref-inline:
+    anyOf:
+    - $ref: "#/definitions/array-ref-inline"
+    - $ref: "#/definitions/boolean-ref-inline"
+    - $ref: "#/definitions/date-ref-inline"
+    - $ref: "#/definitions/decimal-ref-inline"
+    - $ref: "#/definitions/integer-ref-inline"
+    - $ref: "#/definitions/list-ref-inline"
+    - $ref: "#/definitions/map-ref-inline"
+    - $ref: "#/definitions/object-ref-inline"
+    - $ref: "#/definitions/set-ref-inline"
+    - $ref: "#/definitions/string-ref-inline"
+
+  type-ref-expanded:
+    oneOf:
+    - $ref: "#/definitions/array-ref-expanded"
+    - $ref: "#/definitions/boolean-ref-expanded"
+    - $ref: "#/definitions/date-ref-expanded"
+    - $ref: "#/definitions/decimal-ref-expanded"
+    - $ref: "#/definitions/integer-ref-expanded"
+    - $ref: "#/definitions/list-ref-expanded"
+    - $ref: "#/definitions/map-ref-expanded"
+    - $ref: "#/definitions/object-ref-expanded"
+    - $ref: "#/definitions/set-ref-expanded"
+    - $ref: "#/definitions/string-ref-expanded"
+
+  # endregion Type Referencing
+
+  # region Type Defining
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type Defining                                                      | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  type-definition:
+    oneOf:
+    - $ref: "#/definitions/boolean-def"
+    - $ref: "#/definitions/decimal-def"
+    - $ref: "#/definitions/integer-def"
+    - $ref: "#/definitions/string-def"
+
+  # endregion Type Defining
+
+  # region Type: Array
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Array                                                        | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  array-base:
+    type: object
+    properties:
+      type:        { enum: [ array ] }
+      summary:     { type: string }
+      description: { type: string }
+      values:      { $ref: "#/definitions/type-ref-inline" }
+    required:
+    - type
+    - values
+
+  array-ref-inline:
+    title: Inline Set Type Reference
+    type: string
+    pattern: ^array\[(\w[\w\d\[\], ?]*\??)\]\??$
+
+  array-ref-expanded:
+    title: Expanded Set Type Reference
+    allOf:
+    - $ref: "#/definitions/array-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  array-property:
+    title: Set Object Property
+    allOf:
+    - $ref: "#/definitions/array-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  array-example:
+    type: object
+    properties:
+      value:       { type: array }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  # endregion Type: Array
+
+  # region Type: Boolean
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Boolean                                                      | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  boolean-base:
+    description: |
+      Properties common to all boolean type definitions or expanded boolean type
+      references.
+    type: object
+    properties:
+      type:        { enum: [ boolean ] }
+      summary:     { type: string }
+      description: { type: string }
+      example:     { type: boolean }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/example-boolean" }
+    required:
+    - type
+
+  boolean-def:
+    title: Boolean Based New-Type
+    allOf:
+    - $ref: "#/definitions/boolean-base"
+    - properties:
+        name: { $ref: "#/definitions/type-name" }
+      required:
+      - name
+
+  boolean-ref-inline:
+    enum:
+    - boolean
+    - boolean?
+
+  boolean-ref-expanded:
+    allOf:
+    - $ref: "#/definitions/boolean-base"
+    - properties:
+        default:
+          type: boolean
+        nullable:
+          type: boolean
+          default: false
+
+  boolean-property:
+    allOf:
+    - $ref: "#/definitions/boolean-base"
+    - properties:
+        default:
+          type: boolean
+        nullable:
+          type: boolean
+          default: false
+
+  example-boolean:
+    type: object
+    properties:
+      value:       { type: boolean }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  # endregion Type: Boolean
+
+  # region Type: Date
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |    Type: Date                                                        | #
+  # |                                                                      | #
+  # |  Timestamp/date-time representation.                                 | #
+  # |                                                                      | #
+  # |  Valid formats:                                                      | #
+  # |                                                                      | #
+  # |  - date        : 2020-11-01                                          | #
+  # |                                                                      | #
+  # |  - time        : 03:00:00.000                                        | #
+  # |                : 03:00:00                                            | #
+  # |                                                                      | #
+  # |  - datetime    : 2020-11-01T03:00:00.000                             | #
+  # |                : 2020-11-01 03:00:00.000                             | #
+  # |                : 2020-11-01T03:00:00                                 | #
+  # |                : 2020-11-01 03:00:00                                 | #
+  # |                                                                      | #
+  # |  - datetime-tz : 2020-11-01T03:00:00.000Z                            | #
+  # |                : 2020-11-01 03:00:00.000Z                            | #
+  # |                : 2020-11-01T03:00:00.000-05:00                       | #
+  # |                : 2020-11-01 03:00:00.000-05:00                       | #
+  # |                : 2020-11-01T03:00:00Z                                | #
+  # |                : 2020-11-01 03:00:00Z                                | #
+  # |                : 2020-11-01T03:00:00-05:00                           | #
+  # |                : 2020-11-01 03:00:00-05:00                           | #
+  # |                                                                      | #
+  # |  Default Format: datetime-tz                                         | #
+  # +----------------------------------------------------------------------+ #
+
+  # region Date Type: Base
+  # +----------------------------------------------------------------------+ #
+  # |   Date Type: Base                                                    | #
+  # +----------------------------------------------------------------------+ #
+
+  date-base:
+    type: object
+    properties:
+      type: { enum: [ date ] }
+      summary: { type: string }
+      description: { type: string }
+    required:
+    - type
+
+  date-ref-inline:
+    title: Inline Date Type Reference
+    enum:
+    - date
+    - date?
+
+  date-ref-expanded:
+    oneOf:
+    - $ref: "#/definitions/date-ref-expanded-date"
+    - $ref: "#/definitions/date-ref-expanded-time"
+    - $ref: "#/definitions/date-ref-expanded-datetime"
+    - $ref: "#/definitions/date-ref-expanded-datetime-tz"
+
+  # endregion
+
+  # region Date Type: Date
+  # +----------------------------------------------------------------------+ #
+  # |   Date Type: Date                                                    | #
+  # +----------------------------------------------------------------------+ #
+
+  date-base-date:
+    allOf:
+    - $ref: "#/definitions/date-base"
+    - properties:
+        format: { enum: [ date ] }
+        example: { $ref: "#/definitions/date-string-date" }
+        examples:
+          type: array
+          items: { $ref: "#/definitions/date-example-date" }
+
+  date-ref-expanded-date:
+    title: Expanded Date Type Reference
+    allOf:
+    - $ref: "#/definitions/date-base-date"
+    - properties:
+        default: { $ref: "#/definitions/date-string-date" }
+        nullable:
+          type: boolean
+          default: false
+
+  date-example-date:
+    type: object
+    properties:
+      value:       { $ref: "#/definitions/date-string-date" }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  date-string-date:
+    title: Date String
+    type: string
+    pattern: ^\d{4}-\d{2}-\d{2}$
+    examples:
+    - 2002-10-02
+
+  # endregion
+
+  # region Date Type: Time
+  # +----------------------------------------------------------------------+ #
+  # |   Date Type: Time                                                    | #
+  # +----------------------------------------------------------------------+ #
+
+  date-base-time:
+    allOf:
+    - $ref: "#/definitions/date-base"
+    - properties:
+        format: { enum: [ time ] }
+        example: { $ref: "#/definitions/date-string-time" }
+        examples:
+          type: array
+          items: { $ref: "#/definitions/date-example-time" }
+
+  date-ref-expanded-time:
+    title: Expanded Date Type Reference
+    allOf:
+    - $ref: "#/definitions/date-base-time"
+    - properties:
+        default: { $ref: "#/definitions/date-string-time" }
+        nullable:
+          type: boolean
+          default: false
+
+  date-example-time:
+    type: object
+    properties:
+      value:       { $ref: "#/definitions/date-string-time" }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  date-string-time:
+    title: Time String
+    type: string
+    pattern: ^\d{2}:\d{2}:\d{2}(?:\.\d+)?$
+    examples:
+    - 15:00:00.05
+    - 15:00:00
+
+  # endregion
+
+  # region Date Type: Datetime
+  # +----------------------------------------------------------------------+ #
+  # |   Date Type: Datetime                                                | #
+  # +----------------------------------------------------------------------+ #
+
+  date-base-datetime:
+    allOf:
+    - $ref: "#/definitions/date-base"
+    - properties:
+        format: { enum: [ datetime ] }
+        example: { $ref: "#/definitions/date-string-datetime" }
+        examples:
+          type: array
+          items: { $ref: "#/definitions/date-example-datetime" }
+
+  date-ref-expanded-datetime:
+    title: Expanded Date Type Reference
+    allOf:
+    - $ref: "#/definitions/date-base-datetime"
+    - properties:
+        default: { $ref: "#/definitions/date-string-datetime" }
+        nullable:
+          type: boolean
+          default: false
+
+  date-example-datetime:
+    type: object
+    properties:
+      value:       { $ref: "#/definitions/date-string-datetime" }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  date-string-datetime:
+    title: Datetime String Without Timezone
+    type: string
+    pattern: ^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?$
+    examples:
+    - 2002-10-02T10:00:00
+    - 2002-10-02T15:00:00.05
+    - 2002-10-02 10:00:00
+    - 2002-10-02 15:00:00.05
+
+  # endregion
+
+  # region Date Type: Datetime with Timezone
+  # +----------------------------------------------------------------------+ #
+  # |   Date Type: Datetime with Timezone                                  | #
+  # +----------------------------------------------------------------------+ #
+
+  date-base-datetime-tz:
+    allOf:
+    - $ref: "#/definitions/date-base"
+    - properties:
+        format: { enum: [ time ] }
+        example: { $ref: "#/definitions/date-string-datetime-tz" }
+        examples:
+          type: array
+          items: { $ref: "#/definitions/date-example-datetime-tz" }
+
+  date-ref-expanded-datetime-tz:
+    title: Expanded Date Type Reference
+    allOf:
+    - $ref: "#/definitions/date-base-datetime-tz"
+    - properties:
+        default: { $ref: "#/definitions/date-string-datetime-tz" }
+        nullable:
+          type: boolean
+          default: false
+
+  date-example-datetime-tz:
+    type: object
+    properties:
+      value:       { $ref: "#/definitions/date-string-datetime-tz" }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  date-string-datetime-tz:
+    title: Datetime String With Timezone
+    type: string
+    pattern: ^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[-+]\d{2}:\d{2})$
+    examples:
+    - 2002-10-02T10:00:00-05:00
+    - 2002-10-02T15:00:00Z
+    - 2002-10-02T15:00:00.05Z
+    - 2002-10-02 10:00:00+05:00
+    - 2002-10-02 15:00:00Z
+    - 2002-10-02 15:00:00.05Z
+
+  # endregion
+
+  # endregion Type: Date
+
+  # region Type: Decimal
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Decimal                                                      | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  decimal-base:
+    description: |
+      Properties common to all decimal type definitions or expanded decimal type
+      references.
+    type: object
+    properties:
+      type: { enum: [ decimal ] }
+      format:
+        enum:
+        - float32
+        - float64
+        - big
+        default: float64
+      summary:
+        title: Type Summary
+        description: Short description of the type being defined.
+        type: string
+      description:
+        title: Type Description
+        description: Long description or help text for the type being defined.
+        type: string
+      iMin:    { type: number }
+      iMax:    { type: number }
+      eMin:    { type: number }
+      eMax:    { type: number }
+      example: { type: number }
+      examples:
+        type:  array
+        items: { $ref: "#/definitions/decimal-example" }
+    required:
+    - type
+
+  decimal-def:
+    title: Decimal Based New-Type
+    allOf:
+    - $ref: "#/definitions/decimal-base"
+    - properties:
+        name: { $ref: "#/definitions/type-name" }
+      required:
+      - name
+
+  decimal-ref-inline:
+    enum:
+    - decimal
+    - decimal?
+
+  decimal-ref-expanded:
+    title: Expanded Decimal Type Reference
+    allOf:
+    - $ref: "#/definitions/decimal-base"
+    - properties:
+        default: { type: number }
+        nullable:
+          type: boolean
+          default: false
+
+  decimal-property:
+    title: Decimal Object Property
+    allOf:
+    - $ref: "#/definitions/decimal-base"
+    - properties:
+        default: { type: number }
+        nullable:
+          type: boolean
+          default: false
+
+  decimal-example:
+    type: object
+    properties:
+      value:       { type: number }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  # endregion Type: Decimal
+
+  # region Type: Integer
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Integer                                                      | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  integer-base:
+    description: |
+      Properties common to all integer type definitions or expanded integer type
+      references.
+    type: object
+    properties:
+      type: { enum: [ integer ] }
+      format:
+        enum:
+        - int8
+        - int16
+        - int32
+        - int64
+        - uint8
+        - uint16
+        - uint32
+        - uint64
+        - big
+        default: int32
+      summary:
+        title: Type Summary
+        description: Short description of the type being defined.
+        type: string
+      description:
+        title: Type Description
+        description: Long description or help text for the type being defined.
+        type: string
+      iMin:    { type: integer }
+      iMax:    { type: integer }
+      eMin:    { type: integer }
+      eMax:    { type: integer }
+      example: { type: integer }
+      examples:
+        type:  array
+        items: { $ref: "#/definitions/integer-example" }
+    required:
+    - type
+
+  integer-def:
+    title: Integer Based New-Type
+    allOf:
+    - $ref: "#/definitions/integer-base"
+    - properties:
+        name: { $ref: "#/definitions/type-name" }
+      required:
+      - name
+
+  integer-ref-inline:
+    enum:
+    - integer
+    - integer?
+
+  integer-ref-expanded:
+    title: Extended Integer Type Reference
+    allOf:
+    - $ref: "#/definitions/integer-base"
+    - properties:
+        default: { type: integer }
+        nullable:
+          type: boolean
+          default: false
+
+  integer-property:
+    title: Integer Object Property
+    allOf:
+    - $ref: "#/definitions/integer-base"
+    - properties:
+        default: { type: integer }
+        nullable:
+          type: boolean
+          default: false
+
+  integer-example:
+    type: object
+    properties:
+      value:       { type: integer }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  # endregion Type: Integer
+
+  # region Type: List
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: List                                                         | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  list-base:
+    type: object
+    properties:
+      type:        { enum: [ list ] }
+      summary:     { type: string }
+      description: { type: string }
+      values:      { $ref: "#/definitions/type-ref-inline" }
+    required:
+    - type
+    - values
+
+  list-ref-inline:
+    title: Inline Set Type Reference
+    type: string
+    pattern: ^list\[(\w[\w\d\[\], ?]*\??)\]\??$
+
+  list-ref-expanded:
+    title: Expanded Set Type Reference
+    allOf:
+    - $ref: "#/definitions/list-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  list-property:
+    title: Set Object Property
+    allOf:
+    - $ref: "#/definitions/list-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  list-example:
+    type: object
+    properties:
+      value:       { type: array }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  # endregion Type: List
+
+  # region Type: Map
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Map                                                          | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  map-base:
+    type: object
+    properties:
+      type:        { enum: [ list ] }
+      summary:     { type: string }
+      description: { type: string }
+      keys:        { $ref: "#/definitions/type-ref-inline" }
+      values:      { $ref: "#/definitions/type-ref-inline" }
+    required:
+    - type
+    - values
+
+  map-ref-inline:
+    title: Inline Set Type Reference
+    type: string
+    pattern: ^map\[(\w[\w\d\[\], ?]*), ?(\w[\w\d\[\], ?]*\??)\]\??$
+
+  map-ref-expanded:
+    title: Expanded Set Type Reference
+    allOf:
+    - $ref: "#/definitions/map-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  map-property:
+    title: Set Object Property
+    allOf:
+    - $ref: "#/definitions/map-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  map-example:
+    type: object
+    properties:
+      value:       { type: array }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  # endregion Type: Map
+
+  # region Type: Object
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Object                                                       | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  object-ref-inline:
+    title: Inline Untyped Object Reference
+    enum:
+    - object
+    - object?
+
+  object-ref-expanded:
+    title: Expanded Untyped Object Reference
+    type: object
+    properties:
+      type: { enum: [ object ] }
+      nullable:
+        type: boolean
+        default: false
+    required:
+    - type
+
+  # endregion Type: Object
+
+  # region Type: Set
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Set                                                          | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  set-base:
+    type: object
+    properties:
+      type:        { enum: [ set ] }
+      summary:     { type: string }
+      description: { type: string }
+      values:      { $ref: "#/definitions/type-ref-inline" }
+    required:
+    - type
+    - values
+
+  set-ref-inline:
+    title: Inline Set Type Reference
+    type: string
+    pattern: ^set\[(\w[\w\d\[\], ?]*\??)\]\??$
+
+  set-ref-expanded:
+    title: Expanded Set Type Reference
+    allOf:
+    - $ref: "#/definitions/set-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  set-property:
+    title: Set Object Property
+    allOf:
+    - $ref: "#/definitions/set-base"
+    - properties:
+        nullable:
+          type: boolean
+          default: false
+
+  set-example:
+    type: object
+    properties:
+      value:       { type: array }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  # endregion Type: Set
+
+  # region Type: String
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: String                                                       | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  string-base:
+    description: |
+      Properties common to all string type definitions or expanded string type
+      references.
+    type: object
+    properties:
+      type:        { enum: [ string ] }
+      summary:     { type: string }
+      description: { type: string }
+      minLength:
+        type: integer
+        minimum: 0
+        default: 0
+      maxLength:
+        type: integer
+        minimum: 0
+      pattern:
+        type: string
+        format: regex
+      example: { type: string }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/string-example" }
+    required:
+    - type
+
+  string-ref-inline:
+    enum:
+    - string
+    - string?
+
+  string-ref-expanded:
+    title: Expanded String Type Reference
+    allOf:
+    - $ref: "#/definitions/string-base"
+    - properties:
+        default: { type: string }
+        nullable:
+          type: boolean
+          default: false
+
+  string-def:
+    title: String Based New-Type
+    allOf:
+    - $ref: "#/definitions/string-base"
+    - properties:
+        name: { $ref: "#/definitions/type-name" }
+      required:
+      - name
+
+  string-property:
+    title: String Object Property
+    allOf:
+    - $ref: "#/definitions/string-base"
+    - properties:
+        default: { type: string }
+        nullable:
+          type: boolean
+          default: false
+
+  string-example:
+    type: object
+    properties:
+      value:       { type: string }
+      summary:     { type: string }
+      description: { type: string }
+    required:
+    - value
+
+  # endregion Type: String
+
+  # endregion KAPI Types Schemata
