@@ -63,8 +63,7 @@ definitions:
   seg-kapi-version:
     title: KAPI Version
     type: string
-    enum:
-    - v0.4
+    enum: [ v0.4 ]
 
   # +----------------------------------------------------------------------+ #
   # |   Segment: Imports                                                   | #
@@ -73,14 +72,15 @@ definitions:
   seg-imports:
     title: Import Definitions
     description: |
-      The imports block is where dependence on external files are declared and
-      prefixes for using the components defined.
+      The imports block is where dependence on external files are declared.
     type: object
-    patternProperties:
-      ^[a-z][\w\d]*$:
-        oneOf:
-        - $ref: "#/definitions/path-remote"
-        - $ref: "#/definitions/path-local"
+    properties:
+      libraries:
+        type: array
+        items:
+          oneOf:
+          - $ref: "#/definitions/path-remote"
+          - $ref: "#/definitions/path-local"
     additionalProperties: false
 
   path-local:
@@ -147,8 +147,10 @@ definitions:
     minProperties: 1
     additionalProperties: false
     patternProperties:
-      ^(?:/(?:[\d\w\-.]+|\{[\d\w\-]+\}))+$:
-        $ref: "#/definitions/route"
+      ^(?:/|(?:/[\d\w\-.]+)+)$:
+        $ref: "#/definitions/route-no-params"
+      ^(?:(?:/[\d\w\-.]+)*(?:/\{[\d\w\-]+\})+(?:/[\d\w\-.]+)*)*$:
+        $ref: "#/definitions/route-with-params"
 
   # +----------------------------------------------------------------------+ #
   # |   Segment: Components                                                | #
@@ -158,9 +160,18 @@ definitions:
     title: API Component Definitions
     type: object
     properties:
+      responses:
+        type: object
+        patternProperties:
+          ^\w[\w\d]*$:
+            $ref: "#/definitions/response-handle"
+
       types:
-        type: array
-        items: { $ref: "#/definitions/type-definition" }
+        type: object
+        patternProperties:
+          ^\w[\w\d]*$:
+            $ref: "#/definitions/type-definition"
+        additionalProperties: false
     required:
     - types
 
@@ -176,7 +187,46 @@ definitions:
   # |                                                                                                              | #
   # +--------------------------------------------------------------------------------------------------------------+ #
 
-  route:
+  # region HTTP Routes
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   HTTP Routes                                                        | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  route-no-params:
+    type: object
+    properties:
+      summary:
+        title: Route Summary
+        type: string
+      description:
+        title: Route Description
+        type: string
+      delete:
+        title: Delete Requests
+        $ref: "#/definitions/method-no-body"
+      get:
+        title: Get Requests
+        $ref: "#/definitions/method-no-body"
+      head:
+        title: Head Requests
+        $ref: "#/definitions/method-no-body"
+      options:
+        title: Options Requests
+        $ref: "#/definitions/method-no-body"
+      patch:
+        title: Patch Requests
+        $ref: "#/definitions/method-with-body"
+      post:
+        title: Post Requests
+        $ref: "#/definitions/method-with-body"
+      put:
+        title: Put Requests
+        $ref: "#/definitions/method-with-body"
+    additionalProperties: false
+
+  route-with-params:
     type: object
     properties:
       summary:
@@ -211,6 +261,11 @@ definitions:
       put:
         title: Put Requests
         $ref: "#/definitions/method-with-body"
+    required:
+    - uri
+    additionalProperties: false
+
+  # endregion HTTP Routes
 
   uri-param:
     title: URI Parameter
@@ -228,6 +283,7 @@ definitions:
     - name
     - value
 
+  # region HTTP Methods
   # +----------------------------------------------------------------------+ #
   # |                                                                      | #
   # |   HTTP Methods                                                       | #
@@ -255,6 +311,9 @@ definitions:
     - request
     - responses
 
+  # endregion HTTP Methods
+
+  # region HTTP Requests
   # +----------------------------------------------------------------------+ #
   # |                                                                      | #
   # |   HTTP Requests                                                      | #
@@ -305,6 +364,9 @@ definitions:
     required:
     - value
 
+  # endregion HTTP Requests
+
+  # region HTTP Responses
   # +----------------------------------------------------------------------+ #
   # |                                                                      | #
   # |   HTTP Responses                                                     | #
@@ -318,242 +380,201 @@ definitions:
       codes.
     type: object
     properties:
-      # 1xx Codes
-      100:
-        title: Continue
-        $ref: "#/definitions/response"
-      101:
-        title: Switching Protocols
-        $ref: "#/definitions/response"
-      102:
-        title: Processing
-        $ref: "#/definitions/response"
-      103:
-        title: Early Hints
-        $ref: "#/definitions/response"
       # 2xx Codes
       200:
         title: OK
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       201:
         title: Created
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       202:
         title: Accepted
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       203:
         title: Non-Authoritative Information
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       204:
         title: No Content
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       205:
         title: Reset Content
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       206:
         title: Partial Content
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       207:
         title: Multi-Status
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       208:
         title: Already Reported
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       226:
         title: IM Used
-        $ref: "#/definitions/response"
-      # 3xx Codes
-      300:
-        title: Multiple Choices
-        $ref: "#/definitions/response"
-      301:
-        title: Moved Permanently
-        $ref: "#/definitions/response"
-      302:
-        title: Found
-        $ref: "#/definitions/response"
-      303:
-        title: See Other
-        $ref: "#/definitions/response"
-      304:
-        title: Not Modified
-        $ref: "#/definitions/response"
-      305:
-        title: Use Proxy
-        $ref: "#/definitions/response"
-      306:
-        title: Switch Proxy
-        $ref: "#/definitions/response"
-      307:
-        title: Temporary Redirect
-        $ref: "#/definitions/response"
-      308:
-        title: Permanent Redirect
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       # 4xx Codes
       400:
         title: Bad Request
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       401:
         title: Unauthorized
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       402:
         title: Payment Required
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       403:
         title: Forbidden
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       404:
         title: Not Found
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       405:
         title: Method Not Allowed
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       406:
         title: Not Acceptable
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       407:
         title: Proxy Authentication Required
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       408:
         title: Request Timeout
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       409:
         title: Conflict
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       410:
         title: Gone
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       411:
         title: Length Required
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       412:
         title: Precondition Failed
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       413:
         title: Payload Too Large
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       414:
         title: URI Too Long
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       415:
         title: Unsupported Media Type
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       416:
         title: Range Not Satisfiable
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       417:
         title: Expectation Failed
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       418:
         title: I'm a Teapot
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       419:
         title: Page Expired
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       420:
         title: Enhance Your Calm
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       421:
         title: Misdirected Request
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       422:
         title: Unprocessable Entity
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       423:
         title: Locked
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       424:
         title: Failed Dependency
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       425:
         title: Too Early
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       426:
         title: Upgrade Required
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       428:
         title: Precondition Required
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       429:
         title: Too Many Requests
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       430:
         title: Request Header Fields Too Large
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       431:
         title: Request Header Fields Too Large
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       440:
         title: Login Time-out
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       449:
         title: Retry With
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       450:
         title: Blocked by Windows Parental Controls
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       451:
         title: Unavailable For Legal Reasons
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       498:
         title: Invalid Token
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       499:
         title: Token Required
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       # 5xx Codes
       500:
         title: Internal Server Error
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       501:
         title: Not Implemented
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       502:
         title: Bad Gateway
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       503:
         title: Service Unavailable
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       504:
         title: Gateway Timeout
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       505:
         title: HTTP Version Not Supported
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       506:
         title: Variante Also Negotiates
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       507:
         title: Insufficient Storage
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       508:
         title: Loop Detected
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       509:
         title: Bandwidth Limit Exceeded
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       510:
         title: Not Extended
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       511:
         title: Network Authentication Required
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       529:
         title: Site is Overloaded
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       530:
         title: Site is Frozen
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       598:
         title: Network Read Timeout Error
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
       599:
         title: Network Connect Timeout Error
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
     patternProperties:
       ^[1-5]\d\d$:
-        $ref: "#/definitions/response"
+        $ref: "#/definitions/response-handle"
     minProperties: 1
 
   response-mime-map:
@@ -573,7 +594,16 @@ definitions:
     patternProperties:
       ^[a-z]+/[\w\d\-.+]+$: { $ref: "#/definitions/response-content" }
 
-  response:
+  response-handle:
+    oneOf:
+    - $ref: "#/definitions/response-ref"
+    - $ref: "#/definitions/response-def"
+
+  response-ref:
+    type: string
+    pattern: ^responses\.\w[\w\d]*$
+
+  response-def:
     title: Response
     type: object
     properties:
@@ -594,6 +624,7 @@ definitions:
     required:
     - value
 
+  # endregion HTTP Responses
 
   # +----------------------------------------------------------------------+ #
   # |  Queries & Headers                                                   | #
@@ -646,16 +677,12 @@ definitions:
   # |                                                                      | #
   # +----------------------------------------------------------------------+ #
 
-  type-name:
+  type-name-ref:
     type: string
-    pattern: ^\w[\w\d]*$
-
-  type-name-import:
-    type: string
-    pattern: ^[a-z][\w\d]*\.\w[\w\d]*$
+    pattern: ^types\.\w[\w\d]*$
     examples:
-    - lib.MyType
-    - common.RequestID
+    - types.RequestID
+    - types.my_type
 
   # endregion Type Meta
 
@@ -667,12 +694,12 @@ definitions:
   # +----------------------------------------------------------------------+ #
 
   type-reference:
-    anyOf:
+    oneOf:
     - $ref: "#/definitions/type-ref-inline"
     - $ref: "#/definitions/type-ref-expanded"
 
   type-ref-inline:
-    anyOf:
+    oneOf:
     - $ref: "#/definitions/array-ref-inline"
     - $ref: "#/definitions/boolean-ref-inline"
     - $ref: "#/definitions/custom-ref-inline"
@@ -686,7 +713,7 @@ definitions:
     - $ref: "#/definitions/string-ref-inline"
 
   type-ref-expanded:
-    anyOf:
+    oneOf:
     - $ref: "#/definitions/array-ref-expanded"
     - $ref: "#/definitions/boolean-ref-expanded"
     - $ref: "#/definitions/custom-ref-expanded"
@@ -796,12 +823,7 @@ definitions:
 
   boolean-def:
     title: Boolean Based New-Type
-    allOf:
-    - $ref: "#/definitions/boolean-base"
-    - properties:
-        name: { $ref: "#/definitions/type-name" }
-      required:
-      - name
+    $ref: "#/definitions/boolean-base"
 
   boolean-ref-inline:
     enum:
@@ -849,7 +871,6 @@ definitions:
   custom-def:
     type: object
     properties:
-      name: { $ref: "#/definitions/type-name" }
       summary:
         title: Custom Object Summary
         type: string
@@ -866,9 +887,7 @@ definitions:
           definition.
           
           Custom object types cannot extend new-types wrapping scalar values.
-        oneOf:
-        - $ref: "#/definitions/type-name-import"
-        - $ref: "#/definitions/type-name"
+        $ref: "#/definitions/custom-ref-inline"
       typeHintField:
         title: Polymorphic Type Hint Field
         description: |
@@ -896,13 +915,9 @@ definitions:
       examples:
         type: array
         items: { $ref: "#/definitions/custom-example"}
-    required:
-    - name
 
   custom-ref-inline:
-    oneOf:
-    - $ref: "#/definitions/type-name"
-    - $ref: "#/definitions/type-name-import"
+    $ref: "#/definitions/type-name-ref"
 
   custom-ref-expanded:
     type: object
@@ -1126,7 +1141,7 @@ definitions:
     allOf:
     - $ref: "#/definitions/date-base"
     - properties:
-        format: { enum: [ time ] }
+        format: { enum: [ datetime-tz ] }
         example: { $ref: "#/definitions/date-string-datetime-tz" }
         examples:
           type: array
@@ -1203,12 +1218,7 @@ definitions:
 
   decimal-def:
     title: Decimal Based New-Type
-    allOf:
-    - $ref: "#/definitions/decimal-base"
-    - properties:
-        name: { $ref: "#/definitions/type-name" }
-      required:
-      - name
+    $ref: "#/definitions/decimal-base"
 
   decimal-ref-inline:
     enum:
@@ -1294,7 +1304,6 @@ definitions:
   enum-def-plain:
     type: object
     properties:
-      name:        { $ref: "#/definitions/type-name" }
       summary:     { type: string }
       description: { type: string }
       type:        { enum: [ enum ] }
@@ -1308,7 +1317,6 @@ definitions:
         type: array
         items: { $ref: "#/definitions/enum-example" }
     required:
-    - name
     - type
     - wraps
     - values
@@ -1321,7 +1329,6 @@ definitions:
   enum-def-boolean:
     type: object
     properties:
-      name:        { $ref: "#/definitions/type-name" }
       summary:     { type: string }
       description: { type: string }
       type:        { enum: [ enum ] }
@@ -1336,7 +1343,6 @@ definitions:
         type: array
         items: { $ref: "#/definitions/enum-example" }
     required:
-    - name
     - type
     - wraps
     - values
@@ -1349,7 +1355,6 @@ definitions:
   enum-def-decimal:
     type: object
     properties:
-      name:        { $ref: "#/definitions/type-name" }
       summary:     { type: string }
       description: { type: string }
       type:        { enum: [ enum ] }
@@ -1365,7 +1370,6 @@ definitions:
         type: array
         items: { $ref: "#/definitions/enum-example" }
     required:
-    - name
     - type
     - wraps
     - values
@@ -1378,7 +1382,6 @@ definitions:
   enum-def-integer:
     type: object
     properties:
-      name:        { $ref: "#/definitions/type-name" }
       summary:     { type: string }
       description: { type: string }
       type:        { enum: [ enum ] }
@@ -1394,7 +1397,6 @@ definitions:
         type: array
         items: { $ref: "#/definitions/enum-example" }
     required:
-    - name
     - type
     - wraps
     - values
@@ -1407,7 +1409,6 @@ definitions:
   enum-def-string:
     type: object
     properties:
-      name:        { $ref: "#/definitions/type-name" }
       summary:     { type: string }
       description: { type: string }
       type:        { enum: [ enum ] }
@@ -1422,7 +1423,6 @@ definitions:
         type: array
         items: { $ref: "#/definitions/enum-example" }
     required:
-    - name
     - type
     - wraps
     - values
@@ -1466,12 +1466,7 @@ definitions:
 
   integer-def:
     title: Integer Based New-Type
-    allOf:
-    - $ref: "#/definitions/integer-base"
-    - properties:
-        name: { $ref: "#/definitions/type-name" }
-      required:
-      - name
+    $ref: "#/definitions/integer-base"
 
   integer-ref-inline:
     enum:
@@ -1772,12 +1767,7 @@ definitions:
 
   string-def:
     title: String Based New-Type
-    allOf:
-    - $ref: "#/definitions/string-base"
-    - properties:
-        name: { $ref: "#/definitions/type-name" }
-      required:
-      - name
+    $ref: "#/definitions/string-base"
 
   string-property:
     title: String Object Property

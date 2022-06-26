@@ -6,8 +6,9 @@ info:
   version: 1.0.0
 
 imports:
-  errors: includes/errors.yml
-  health: includes/health.yml
+  libraries:
+  - includes/errors.yml
+  - includes/health.yml
 
 routes:
   /api:
@@ -26,7 +27,7 @@ routes:
           summary: Success
           content:
             application/json:
-              value: health.ServiceHealthInfo
+              value: types.ServiceHealthInfo
   /users:
     get:
       summary: User List
@@ -36,22 +37,55 @@ routes:
           content:
             application/json:
               value: list[User]
-
-components:
-  types:
-  - name: User
-    type: object
-    properties:
-      userId:
+        401: responses.Unauthorized
+        500: responses.InternalError
+    post:
+      request:
+        content:
+          application/json:
+            value: types.NewUserRequest
+      responses:
+        200:
+          content:
+            application/json:
+              value: types.User
+  /users/{user-id}:
+    uri:
+    - name: user-id
+      value:
         type: integer
         format: uint64
-      username:
-        type: string
-        minLength: 3
-        maxLength: 64
-      created:
-        type: date
-        format: datetime-tz
+    get:
+      responses:
+        200:
+          content:
+            application/json:
+              value: types.User
+        401: responses.Unauthorized
+        404: responses.NotFound
+        500: responses.InternalError
 
+components:
+
+  types:
+    Username:
+      type: string
+      minLength: 3
+      maxLength: 64
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: uint64
+        username: types.Username
+        created:
+          type: date
+          format: datetime-tz
+    NewUserRequest:
+      type: object
+      properties:
+        username:
+          type: types.Username
 
 
