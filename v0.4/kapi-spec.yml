@@ -147,10 +147,8 @@ definitions:
     minProperties: 1
     additionalProperties: false
     patternProperties:
-      ^(?:/[\d\w\-.]+)+$:
-        $ref: "#/definitions/route-plain"
       ^(?:/(?:[\d\w\-.]+|\{[\d\w\-]+\}))+$:
-        $ref: "#/definitions/route-patterned"
+        $ref: "#/definitions/route"
 
   # +----------------------------------------------------------------------+ #
   # |   Segment: Components                                                | #
@@ -178,9 +176,7 @@ definitions:
   # |                                                                                                              | #
   # +--------------------------------------------------------------------------------------------------------------+ #
 
-  route-plain:
-    title: Non-Parameterized Route
-    description: A route/endpoint that does not accept URI parameters.
+  route:
     type: object
     properties:
       summary:
@@ -189,6 +185,11 @@ definitions:
       description:
         title: Route Description
         type: string
+      uri:
+        type: array
+        items:
+          $ref: "#/definitions/uri-param"
+        minItems: 1
       delete:
         title: Delete Requests
         $ref: "#/definitions/method-no-body"
@@ -211,21 +212,21 @@ definitions:
         title: Put Requests
         $ref: "#/definitions/method-with-body"
 
-  route-patterned:
-    title: Parameterized Route
-    description: A route/endpoint with one or more URI parameters.
-    allOf:
-    - $ref: "#/definitions/route-plain"
-    - type: object
-      properties:
-        uri:
-          type: array
-          items:
-            $ref: "#/definitions/uri-param"
-          minItems: 1
-      required:
-      - uri
-
+  uri-param:
+    title: URI Parameter
+    type: object
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      value:
+        $ref: "#/definitions/type-reference"
+    required:
+    - name
+    - value
 
   # +----------------------------------------------------------------------+ #
   # |                                                                      | #
@@ -666,7 +667,7 @@ definitions:
   # +----------------------------------------------------------------------+ #
 
   type-reference:
-    oneOf:
+    anyOf:
     - $ref: "#/definitions/type-ref-inline"
     - $ref: "#/definitions/type-ref-expanded"
 
@@ -685,7 +686,7 @@ definitions:
     - $ref: "#/definitions/string-ref-inline"
 
   type-ref-expanded:
-    oneOf:
+    anyOf:
     - $ref: "#/definitions/array-ref-expanded"
     - $ref: "#/definitions/boolean-ref-expanded"
     - $ref: "#/definitions/custom-ref-expanded"
@@ -890,18 +891,13 @@ definitions:
         additionalProperties: false
         patternProperties:
           ^[a-z][\w\d]*$:
-            title: Custom Object Property
-            $ref: "#/definitions/custom-def-prop"
+            $ref: "#/definitions/type-reference"
       example: { type: object }
       examples:
         type: array
         items: { $ref: "#/definitions/custom-example"}
     required:
     - name
-
-  custom-def-prop:
-    title: Custom Object Property
-    $ref: "#/definitions/type-reference"
 
   custom-ref-inline:
     oneOf:
@@ -1432,9 +1428,7 @@ definitions:
     - values
     additionalProperties: false
 
-
   # endregion Type: Enum
-
 
   # region Type: Integer
   # +----------------------------------------------------------------------+ #

@@ -1,0 +1,35 @@
+kapi: v0.4
+type: library
+components:
+  types:
+  - name: ServiceHealthInfo
+    type: object
+    properties:
+      serviceName: string
+      serviceVersion: string
+      serviceHealth: ServiceHealthStatus
+      dependencies:
+        type: list
+        values: DependencyHealthInfo
+
+  - name: DependencyHealthInfo
+    type: object
+    properties:
+      dependencyName: string
+      dependencyStatus: DependencyStatus
+
+  - name: ServiceHealthStatus
+    type: enum
+    wraps: string
+    values:
+      Healthy: healthy
+      Unhealthy: unhealthy
+
+  - name: DependencyStatus
+    type: enum
+    wraps: string
+    values:
+      Healthy: healthy
+      Unknown: unknown
+      Unreachable: unreachable
+

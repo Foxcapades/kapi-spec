@@ -5,12 +5,53 @@ info:
   title: Example API
   version: 1.0.0
 
+imports:
+  errors: includes/errors.yml
+  health: includes/health.yml
+
 routes:
   /api:
-    summary: API Documentation
     get:
+      summary: API Documentation
       responses:
         200:
           content:
             text/html:
               value: any
+  /health:
+    get:
+      summary: Service Health Info
+      responses:
+        200:
+          summary: Success
+          content:
+            application/json:
+              value: health.ServiceHealthInfo
+  /users:
+    get:
+      summary: User List
+      responses:
+        200:
+          summary: Success
+          content:
+            application/json:
+              value: list[User]
+
+components:
+  types:
+  - name: User
+    type: object
+    properties:
+      userId:
+        type: integer
+        format: uint64
+      username:
+        type: string
+        minLength: 3
+        maxLength: 64
+      created:
+        type: date
+        format: datetime-tz
+
+
+
