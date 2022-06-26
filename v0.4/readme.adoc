@@ -80,47 +80,47 @@ collection and map types must follow one of these patterns:
 
 [source, yaml]
 ----
-name: MyObjectKind
-wraps: string
-values:
-  Kind1: kind-1
-  Kind2: kind-2
+MyObjectKind:
+  wraps: string
+  values:
+    Kind1: kind-1
+    Kind2: kind-2
 ----
 
 ==== Objects
 
 [source, yaml]
 ----
-name: MyObjectType
-type: object
-typeHintField: kind
-properties:
-  kind: MyObjectKind
-  name: string
-  date:
-    type: date
-    format: datetime
-  nullableField: integer?
+MyObjectType:
+  type: object
+  typeHintField: kind
+  properties:
+    kind: types.MyObjectKind
+    name: string
+    date:
+      type: date
+      format: datetime
+    nullableField: integer?
 ----
 
 [source, yaml]
 ----
-name: MySubObjectType
-type: object
-extends: MyObjectType
-typeHintValue: Kind1
-properties:
-  mapField:
-    summary: Map of strings
-    type: map[string, string]
-  listField:
-    summary: List of nullable string values
-    type: list[string?]
-  setField:
-    summary: Nullable set of non-nullable string values
-    type: set[string]?
-  arrayField:
-    summary: Nullable array of nullable string values
-    type: array[string?]?
+MySubObjectType:
+  type: object
+  extends: types.MyObjectType
+  typeHintValue: Kind1
+  properties:
+    mapField:
+      summary: Map of strings
+      type: map[string, string]
+    listField:
+      summary: List of nullable string values
+      type: list[string?]
+    setField:
+      summary: Nullable set of non-nullable string values
+      type: set[string]?
+    arrayField:
+      summary: Nullable array of nullable string values
+      type: array[string?]?
 ----
 
