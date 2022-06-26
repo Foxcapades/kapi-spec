@@ -1,0 +1,16 @@
+kapi: v0.4
+type: api
+
+info:
+  title: Example API
+  version: 1.0.0
+
+routes:
+  /api:
+    summary: API Documentation
+    get:
+      responses:
+        200:
+          content:
+            text/html:
+              value: any

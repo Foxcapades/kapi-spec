@@ -24,24 +24,25 @@ definitions:
   document-api:
     type: object
     properties:
-      kapi:    { $ref: "#/definitions/seg-kapi-version" }
-      type:    { enum: [ api ] }
-      info:    { $ref: "#/definitions/seg-info" }
-      imports: { $ref: "#/definitions/seg-imports" }
-      routes: { }
-      components: { }
+      kapi:       { $ref: "#/definitions/seg-kapi-version" }
+      type:       { enum: [ api ] }
+      info:       { $ref: "#/definitions/seg-info" }
+      imports:    { $ref: "#/definitions/seg-imports" }
+      routes:     { $ref: "#/definitions/seg-routes" }
+      components: { $ref: "#/definitions/seg-components" }
     required:
     - kapi
     - type
     - info
+    - routes
     additionalProperties: false
 
   document-library:
     type: object
     properties:
-      kapi: { $ref: "#/definitions/seg-kapi-version" }
-      type: { enum: [ library ] }
-      components: { }
+      kapi:       { $ref: "#/definitions/seg-kapi-version" }
+      type:       { enum: [ library ] }
+      components: { $ref: "#/definitions/seg-components" }
     required:
     - kapi
     - type
@@ -135,6 +136,36 @@ definitions:
     - title
     - version
 
+  # +----------------------------------------------------------------------+ #
+  # |   Segment: Routes                                                    | #
+  # +----------------------------------------------------------------------+ #
+
+  seg-routes:
+    title: API Route Definitions
+    description: Definitions of routes or endpoints available on this API.
+    type: object
+    minProperties: 1
+    additionalProperties: false
+    patternProperties:
+      ^(?:/[\d\w\-.]+)+$:
+        $ref: "#/definitions/route-plain"
+      ^(?:/(?:[\d\w\-.]+|\{[\d\w\-]+\}))+$:
+        $ref: "#/definitions/route-patterned"
+
+  # +----------------------------------------------------------------------+ #
+  # |   Segment: Components                                                | #
+  # +----------------------------------------------------------------------+ #
+
+  seg-components:
+    title: API Component Definitions
+    type: object
+    properties:
+      types:
+        type: array
+        items: { $ref: "#/definitions/type-definition" }
+    required:
+    - types
+
   # endregion KAPI Document Definitions
 
 
@@ -147,15 +178,453 @@ definitions:
   # |                                                                                                              | #
   # +--------------------------------------------------------------------------------------------------------------+ #
 
-  route: {}
+  route-plain:
+    title: Non-Parameterized Route
+    description: A route/endpoint that does not accept URI parameters.
+    type: object
+    properties:
+      summary:
+        title: Route Summary
+        type: string
+      description:
+        title: Route Description
+        type: string
+      delete:
+        title: Delete Requests
+        $ref: "#/definitions/method-no-body"
+      get:
+        title: Get Requests
+        $ref: "#/definitions/method-no-body"
+      head:
+        title: Head Requests
+        $ref: "#/definitions/method-no-body"
+      options:
+        title: Options Requests
+        $ref: "#/definitions/method-no-body"
+      patch:
+        title: Patch Requests
+        $ref: "#/definitions/method-with-body"
+      post:
+        title: Post Requests
+        $ref: "#/definitions/method-with-body"
+      put:
+        title: Put Requests
+        $ref: "#/definitions/method-with-body"
 
-  route-with-params: {}
+  route-patterned:
+    title: Parameterized Route
+    description: A route/endpoint with one or more URI parameters.
+    allOf:
+    - $ref: "#/definitions/route-plain"
+    - type: object
+      properties:
+        uri:
+          type: array
+          items:
+            $ref: "#/definitions/uri-param"
+          minItems: 1
+      required:
+      - uri
 
-  request: {}
 
-  request-with-body: {}
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   HTTP Methods                                                       | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
 
-  response: {}
+  method-no-body:
+    type: object
+    properties:
+      summary:     { type: string }
+      description: { type: string }
+      request:     { $ref: "#/definitions/request-no-body" }
+      responses:   { $ref: "#/definitions/response-status-map" }
+    required:
+    - responses
+
+  method-with-body:
+    type: object
+    properties:
+      summary:     { type: string }
+      description: { type: string }
+      request:     { $ref: "#/definitions/request-with-body" }
+      responses:   { $ref: "#/definitions/response-status-map" }
+    required:
+    - request
+    - responses
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   HTTP Requests                                                      | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  request-no-body:
+    type: object
+    properties:
+      summary:     { type: string }
+      description: { type: string }
+      headers:     { $ref: "#/definitions/header-map" }
+      query:       { $ref: "#/definitions/query-map" }
+
+  request-with-body:
+    type: object
+    properties:
+      summary:     { type: string }
+      description: { type: string }
+      headers:     { $ref: "#/definitions/header-map" }
+      query:       { $ref: "#/definitions/query-map" }
+      content:     { $ref: "#/definitions/request-mime-map" }
+
+  request-mime-map:
+    title: Request MimeType Map
+    description: Map of media types to the request body definitions.
+    type: object
+    properties:
+      application/gzip:         { $ref: "#/definitions/request-content" }
+      application/json:         { $ref: "#/definitions/request-content" }
+      application/ld+json:      { $ref: "#/definitions/request-content" }
+      application/octet-stream: { $ref: "#/definitions/request-content" }
+      application/xml:          { $ref: "#/definitions/request-content" }
+      application/zip:          { $ref: "#/definitions/request-content" }
+      text/csv:                 { $ref: "#/definitions/request-content" }
+      text/html:                { $ref: "#/definitions/request-content" }
+      text/plain:               { $ref: "#/definitions/request-content" }
+    patternProperties:
+      ^[a-z]+/[\w\d\-.+]+$: { $ref: "#/definitions/request-content" }
+
+  request-content:
+    title: Request Content
+    type: object
+    properties:
+      summary:     { type: string }
+      description: { type: string }
+      value:       { $ref: "#/definitions/type-reference" }
+    required:
+    - value
+
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   HTTP Responses                                                     | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  response-status-map:
+    title: Response Status Map
+    description: |
+      Map of HTTP status codes to the responses that are returned with those
+      codes.
+    type: object
+    properties:
+      # 1xx Codes
+      100:
+        title: Continue
+        $ref: "#/definitions/response"
+      101:
+        title: Switching Protocols
+        $ref: "#/definitions/response"
+      102:
+        title: Processing
+        $ref: "#/definitions/response"
+      103:
+        title: Early Hints
+        $ref: "#/definitions/response"
+      # 2xx Codes
+      200:
+        title: OK
+        $ref: "#/definitions/response"
+      201:
+        title: Created
+        $ref: "#/definitions/response"
+      202:
+        title: Accepted
+        $ref: "#/definitions/response"
+      203:
+        title: Non-Authoritative Information
+        $ref: "#/definitions/response"
+      204:
+        title: No Content
+        $ref: "#/definitions/response"
+      205:
+        title: Reset Content
+        $ref: "#/definitions/response"
+      206:
+        title: Partial Content
+        $ref: "#/definitions/response"
+      207:
+        title: Multi-Status
+        $ref: "#/definitions/response"
+      208:
+        title: Already Reported
+        $ref: "#/definitions/response"
+      226:
+        title: IM Used
+        $ref: "#/definitions/response"
+      # 3xx Codes
+      300:
+        title: Multiple Choices
+        $ref: "#/definitions/response"
+      301:
+        title: Moved Permanently
+        $ref: "#/definitions/response"
+      302:
+        title: Found
+        $ref: "#/definitions/response"
+      303:
+        title: See Other
+        $ref: "#/definitions/response"
+      304:
+        title: Not Modified
+        $ref: "#/definitions/response"
+      305:
+        title: Use Proxy
+        $ref: "#/definitions/response"
+      306:
+        title: Switch Proxy
+        $ref: "#/definitions/response"
+      307:
+        title: Temporary Redirect
+        $ref: "#/definitions/response"
+      308:
+        title: Permanent Redirect
+        $ref: "#/definitions/response"
+      # 4xx Codes
+      400:
+        title: Bad Request
+        $ref: "#/definitions/response"
+      401:
+        title: Unauthorized
+        $ref: "#/definitions/response"
+      402:
+        title: Payment Required
+        $ref: "#/definitions/response"
+      403:
+        title: Forbidden
+        $ref: "#/definitions/response"
+      404:
+        title: Not Found
+        $ref: "#/definitions/response"
+      405:
+        title: Method Not Allowed
+        $ref: "#/definitions/response"
+      406:
+        title: Not Acceptable
+        $ref: "#/definitions/response"
+      407:
+        title: Proxy Authentication Required
+        $ref: "#/definitions/response"
+      408:
+        title: Request Timeout
+        $ref: "#/definitions/response"
+      409:
+        title: Conflict
+        $ref: "#/definitions/response"
+      410:
+        title: Gone
+        $ref: "#/definitions/response"
+      411:
+        title: Length Required
+        $ref: "#/definitions/response"
+      412:
+        title: Precondition Failed
+        $ref: "#/definitions/response"
+      413:
+        title: Payload Too Large
+        $ref: "#/definitions/response"
+      414:
+        title: URI Too Long
+        $ref: "#/definitions/response"
+      415:
+        title: Unsupported Media Type
+        $ref: "#/definitions/response"
+      416:
+        title: Range Not Satisfiable
+        $ref: "#/definitions/response"
+      417:
+        title: Expectation Failed
+        $ref: "#/definitions/response"
+      418:
+        title: I'm a Teapot
+        $ref: "#/definitions/response"
+      419:
+        title: Page Expired
+        $ref: "#/definitions/response"
+      420:
+        title: Enhance Your Calm
+        $ref: "#/definitions/response"
+      421:
+        title: Misdirected Request
+        $ref: "#/definitions/response"
+      422:
+        title: Unprocessable Entity
+        $ref: "#/definitions/response"
+      423:
+        title: Locked
+        $ref: "#/definitions/response"
+      424:
+        title: Failed Dependency
+        $ref: "#/definitions/response"
+      425:
+        title: Too Early
+        $ref: "#/definitions/response"
+      426:
+        title: Upgrade Required
+        $ref: "#/definitions/response"
+      428:
+        title: Precondition Required
+        $ref: "#/definitions/response"
+      429:
+        title: Too Many Requests
+        $ref: "#/definitions/response"
+      430:
+        title: Request Header Fields Too Large
+        $ref: "#/definitions/response"
+      431:
+        title: Request Header Fields Too Large
+        $ref: "#/definitions/response"
+      440:
+        title: Login Time-out
+        $ref: "#/definitions/response"
+      449:
+        title: Retry With
+        $ref: "#/definitions/response"
+      450:
+        title: Blocked by Windows Parental Controls
+        $ref: "#/definitions/response"
+      451:
+        title: Unavailable For Legal Reasons
+        $ref: "#/definitions/response"
+      498:
+        title: Invalid Token
+        $ref: "#/definitions/response"
+      499:
+        title: Token Required
+        $ref: "#/definitions/response"
+      # 5xx Codes
+      500:
+        title: Internal Server Error
+        $ref: "#/definitions/response"
+      501:
+        title: Not Implemented
+        $ref: "#/definitions/response"
+      502:
+        title: Bad Gateway
+        $ref: "#/definitions/response"
+      503:
+        title: Service Unavailable
+        $ref: "#/definitions/response"
+      504:
+        title: Gateway Timeout
+        $ref: "#/definitions/response"
+      505:
+        title: HTTP Version Not Supported
+        $ref: "#/definitions/response"
+      506:
+        title: Variante Also Negotiates
+        $ref: "#/definitions/response"
+      507:
+        title: Insufficient Storage
+        $ref: "#/definitions/response"
+      508:
+        title: Loop Detected
+        $ref: "#/definitions/response"
+      509:
+        title: Bandwidth Limit Exceeded
+        $ref: "#/definitions/response"
+      510:
+        title: Not Extended
+        $ref: "#/definitions/response"
+      511:
+        title: Network Authentication Required
+        $ref: "#/definitions/response"
+      529:
+        title: Site is Overloaded
+        $ref: "#/definitions/response"
+      530:
+        title: Site is Frozen
+        $ref: "#/definitions/response"
+      598:
+        title: Network Read Timeout Error
+        $ref: "#/definitions/response"
+      599:
+        title: Network Connect Timeout Error
+        $ref: "#/definitions/response"
+    patternProperties:
+      ^[1-5]\d\d$:
+        $ref: "#/definitions/response"
+    minProperties: 1
+
+  response-mime-map:
+    title: Response MimeType Map
+    description: Map of media types to the response body definitions.
+    type: object
+    properties:
+      application/gzip:         { $ref: "#/definitions/response-content" }
+      application/json:         { $ref: "#/definitions/response-content" }
+      application/ld+json:      { $ref: "#/definitions/response-content" }
+      application/octet-stream: { $ref: "#/definitions/response-content" }
+      application/xml:          { $ref: "#/definitions/response-content" }
+      application/zip:          { $ref: "#/definitions/response-content" }
+      text/csv:                 { $ref: "#/definitions/response-content" }
+      text/html:                { $ref: "#/definitions/response-content" }
+      text/plain:               { $ref: "#/definitions/response-content" }
+    patternProperties:
+      ^[a-z]+/[\w\d\-.+]+$: { $ref: "#/definitions/response-content" }
+
+  response:
+    title: Response
+    type: object
+    properties:
+      summary:     { type: string }
+      description: { type: string }
+      headers:     { $ref: "#/definitions/header-map" }
+      content:     { $ref: "#/definitions/response-mime-map" }
+    required:
+    - content
+
+  response-content:
+    title: Response Content
+    type: object
+    properties:
+      summary:     { type: string }
+      description: { type: string }
+      value:       { $ref: "#/definitions/type-reference" }
+    required:
+    - value
+
+
+  # +----------------------------------------------------------------------+ #
+  # |  Queries & Headers                                                   | #
+  # +----------------------------------------------------------------------+ #
+
+  query-map:
+    title: Query Parameters
+    type: array
+    items:
+      type: object
+      properties:
+        name:        { type: string }
+        summary:     { type: string }
+        description: { type: string }
+        value:       { $ref: "#/definitions/type-reference" }
+      required:
+      - name
+      - value
+
+  header-map:
+    title: Headers
+    type: array
+    items:
+      type: object
+      properties:
+        header:      { type: string }
+        summary:     { type: string }
+        description: { type: string }
+        value:       { $ref: "#/definitions/type-reference" }
+      required:
+      - header
+      - value
 
   # endregion KAPI HTTP Definitions
 
@@ -180,6 +649,13 @@ definitions:
     type: string
     pattern: ^\w[\w\d]*$
 
+  type-name-import:
+    type: string
+    pattern: ^[a-z][\w\d]*\.\w[\w\d]*$
+    examples:
+    - lib.MyType
+    - common.RequestID
+
   # endregion Type Meta
 
   # region Type Referencing
@@ -198,6 +674,7 @@ definitions:
     anyOf:
     - $ref: "#/definitions/array-ref-inline"
     - $ref: "#/definitions/boolean-ref-inline"
+    - $ref: "#/definitions/custom-ref-inline"
     - $ref: "#/definitions/date-ref-inline"
     - $ref: "#/definitions/decimal-ref-inline"
     - $ref: "#/definitions/integer-ref-inline"
@@ -211,6 +688,7 @@ definitions:
     oneOf:
     - $ref: "#/definitions/array-ref-expanded"
     - $ref: "#/definitions/boolean-ref-expanded"
+    - $ref: "#/definitions/custom-ref-expanded"
     - $ref: "#/definitions/date-ref-expanded"
     - $ref: "#/definitions/decimal-ref-expanded"
     - $ref: "#/definitions/integer-ref-expanded"
@@ -232,7 +710,9 @@ definitions:
   type-definition:
     oneOf:
     - $ref: "#/definitions/boolean-def"
+    - $ref: "#/definitions/custom-def"
     - $ref: "#/definitions/decimal-def"
+    - $ref: "#/definitions/enum-def"
     - $ref: "#/definitions/integer-def"
     - $ref: "#/definitions/string-def"
 
@@ -357,6 +837,96 @@ definitions:
     - value
 
   # endregion Type: Boolean
+
+  # region Type: Custom
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Custom                                                       | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  custom-def:
+    type: object
+    properties:
+      name: { $ref: "#/definitions/type-name" }
+      summary:
+        title: Custom Object Summary
+        type: string
+      description:
+        title: Custom Object Description
+        type: string
+      type: { enum: [ object ] }
+      extends:
+        title: Parent Type
+        description: |
+          Defines the object type that this new type definition extends.
+          
+          The type declared here must be the name of another custom object
+          definition.
+          
+          Custom object types cannot extend new-types wrapping scalar values.
+        oneOf:
+        - $ref: "#/definitions/type-name-import"
+        - $ref: "#/definitions/type-name"
+      typeHintField:
+        title: Polymorphic Type Hint Field
+        description: |
+          Field to use as the type hint or discriminator when deserializing
+          subtypes of a parent type definition referencing only the parent type.
+        type: string
+        pattern: ^[a-z][\w\d]*$
+      typeHintValue:
+        title: Polymorphic Type Hint Value
+        type:
+        - boolean
+        - number
+        - string
+      properties:
+        title: Object Properties
+        description: |
+          Property definitions for the custom object being defined.
+        type: object
+        minProperties: 1
+        additionalProperties: false
+        patternProperties:
+          ^[a-z][\w\d]*$:
+            title: Custom Object Property
+            $ref: "#/definitions/custom-def-prop"
+      example: { type: object }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/custom-example"}
+    required:
+    - name
+
+  custom-def-prop:
+    title: Custom Object Property
+    $ref: "#/definitions/type-reference"
+
+  custom-ref-inline:
+    oneOf:
+    - $ref: "#/definitions/type-name"
+    - $ref: "#/definitions/type-name-import"
+
+  custom-ref-expanded:
+    type: object
+    properties:
+      type:    { $ref: "#/definitions/custom-ref-inline" }
+      example: { type: object }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/custom-example"}
+
+  custom-example:
+    type: object
+    properties:
+      summary:     { type: string }
+      description: { type: string }
+      value:       { type: object }
+    required:
+    - value
+
+  # endregion Type: Custom
 
   # region Type: Date
   # +----------------------------------------------------------------------+ #
@@ -615,12 +1185,7 @@ definitions:
     type: object
     properties:
       type: { enum: [ decimal ] }
-      format:
-        enum:
-        - float32
-        - float64
-        - big
-        default: float64
+      format: { $ref: "#/definitions/decimal-format" }
       summary:
         title: Type Summary
         description: Short description of the type being defined.
@@ -683,7 +1248,193 @@ definitions:
     required:
     - value
 
+  decimal-format:
+    title: Decimal Format
+    enum:
+    - float32
+    - float64
+    - big
+    default: float64
+
+
   # endregion Type: Decimal
+
+  # region Type: Enum
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Type: Enum                                                         | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  # +----------------------------------------------------------------------+ #
+  # |   Enum: Base                                                         | #
+  # +----------------------------------------------------------------------+ #
+
+  enum-value-name:
+    type: string
+    pattern: ^[A-Z][\w\d]*$
+
+  enum-def:
+    oneOf:
+    - $ref: "#/definitions/enum-def-plain"
+    - $ref: "#/definitions/enum-def-boolean"
+    - $ref: "#/definitions/enum-def-decimal"
+    - $ref: "#/definitions/enum-def-integer"
+    - $ref: "#/definitions/enum-def-string"
+
+  enum-example:
+    type: object
+    properties:
+      summary:     { type: string }
+      description: { type: string }
+      value:       { $ref: "#/definitions/enum-value-name" }
+    required:
+    - value
+
+  # +----------------------------------------------------------------------+ #
+  # |   Enum: Plain                                                        | #
+  # +----------------------------------------------------------------------+ #
+
+  enum-def-plain:
+    type: object
+    properties:
+      name:        { $ref: "#/definitions/type-name" }
+      summary:     { type: string }
+      description: { type: string }
+      type:        { enum: [ enum ] }
+      wraps:       { enum: [ none ] }
+      values:
+        type: array
+        items: { $ref: "#/definitions/enum-value-name" }
+        minItems: 1
+      example: { $ref: "#/definitions/enum-value-name" }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/enum-example" }
+    required:
+    - name
+    - type
+    - wraps
+    - values
+    additionalProperties: false
+
+  # +----------------------------------------------------------------------+ #
+  # |   Enum: Boolean                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  enum-def-boolean:
+    type: object
+    properties:
+      name:        { $ref: "#/definitions/type-name" }
+      summary:     { type: string }
+      description: { type: string }
+      type:        { enum: [ enum ] }
+      wraps:       { enum: [ boolean ] }
+      values:
+        type: object
+        patternProperties:
+          ^[A-Z][\w\d]*$: { type: boolean }
+        minProperties: 1
+      example: { $ref: "#/definitions/enum-value-name" }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/enum-example" }
+    required:
+    - name
+    - type
+    - wraps
+    - values
+    additionalProperties: false
+
+  # +----------------------------------------------------------------------+ #
+  # |   Enum: Decimal                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  enum-def-decimal:
+    type: object
+    properties:
+      name:        { $ref: "#/definitions/type-name" }
+      summary:     { type: string }
+      description: { type: string }
+      type:        { enum: [ enum ] }
+      wraps:       { enum: [ decimal ] }
+      format:      { $ref: "#/definitions/decimal-format" }
+      values:
+        type: object
+        patternProperties:
+          ^[A-Z][\w\d]*$: { type: number }
+        minProperties: 1
+      example: { $ref: "#/definitions/enum-value-name" }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/enum-example" }
+    required:
+    - name
+    - type
+    - wraps
+    - values
+    additionalProperties: false
+
+  # +----------------------------------------------------------------------+ #
+  # |   Enum: Integer                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  enum-def-integer:
+    type: object
+    properties:
+      name:        { $ref: "#/definitions/type-name" }
+      summary:     { type: string }
+      description: { type: string }
+      type:        { enum: [ enum ] }
+      wraps:       { enum: [ integer ] }
+      format:      { $ref: "#/definitions/integer-format" }
+      values:
+        type: object
+        patternProperties:
+          ^[A-Z][\w\d]*$: { type: integer }
+        minProperties: 1
+      example: { $ref: "#/definitions/enum-value-name" }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/enum-example" }
+    required:
+    - name
+    - type
+    - wraps
+    - values
+    additionalProperties: false
+
+  # +----------------------------------------------------------------------+ #
+  # |   Enum: String                                                       | #
+  # +----------------------------------------------------------------------+ #
+
+  enum-def-string:
+    type: object
+    properties:
+      name:        { $ref: "#/definitions/type-name" }
+      summary:     { type: string }
+      description: { type: string }
+      type:        { enum: [ enum ] }
+      wraps:       { enum: [ string ] }
+      values:
+        type: object
+        patternProperties:
+          ^[A-Z][\w\d]*$: { type: string }
+        minProperties: 1
+      example: { $ref: "#/definitions/enum-value-name" }
+      examples:
+        type: array
+        items: { $ref: "#/definitions/enum-example" }
+    required:
+    - name
+    - type
+    - wraps
+    - values
+    additionalProperties: false
+
+
+  # endregion Type: Enum
+
 
   # region Type: Integer
   # +----------------------------------------------------------------------+ #
@@ -699,18 +1450,7 @@ definitions:
     type: object
     properties:
       type: { enum: [ integer ] }
-      format:
-        enum:
-        - int8
-        - int16
-        - int32
-        - int64
-        - uint8
-        - uint16
-        - uint32
-        - uint64
-        - big
-        default: int32
+      format: { $ref: "#/definitions/integer-format" }
       summary:
         title: Type Summary
         description: Short description of the type being defined.
@@ -772,6 +1512,20 @@ definitions:
       description: { type: string }
     required:
     - value
+
+  integer-format:
+    title: Integer Format
+    enum:
+    - int8
+    - int16
+    - int32
+    - int64
+    - uint8
+    - uint16
+    - uint32
+    - uint64
+    - big
+    default: int32
 
   # endregion Type: Integer
 
@@ -890,6 +1644,8 @@ definitions:
   object-ref-inline:
     title: Inline Untyped Object Reference
     enum:
+    - any
+    - any?
     - object
     - object?
 
@@ -897,12 +1653,26 @@ definitions:
     title: Expanded Untyped Object Reference
     type: object
     properties:
-      type: { enum: [ object ] }
+      type: { enum: [ object, any ] }
       nullable:
         type: boolean
         default: false
+      example: {}
+      examples:
+        type: array
+        items:
+          $ref: "#/definitions/object-example"
     required:
     - type
+
+  object-example:
+    type: object
+    properties:
+      summary: { type: string }
+      description: { type: string }
+      value: {}
+    required:
+    - value
 
   # endregion Type: Object
 
