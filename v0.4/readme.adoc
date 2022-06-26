@@ -2,18 +2,21 @@
 :revnumber: 0.4
 :author: Elizabeth Paige Harper
 :toc: macro
+:toclevels: 4
 :toc-title:
 
 == Active Notes
 
 unorganized development notes for this rough draft.
 
+=== Table of Contents
+toc::[]
+
 === Inline Type References
 
-simple and custom type names will be just the type name followed by an optional
-`?` character to indicate nullability.
-
 .Examples
+* `any`
+* `any?`
 * `boolean`
 * `boolean?`
 * `date`
@@ -22,15 +25,12 @@ simple and custom type names will be just the type name followed by an optional
 * `decimal?`
 * `integer`
 * `integer?`
+* `object`
+* `object?`
 * `string`
 * `string?`
 
 collection and map types must follow one of these patterns:
-
-* array: `+^array\[(\w[\w\d]*\??)\]\??$+`
-* list: `+^list\[(\w[\w\d]*\??)\]\??$+`
-* map: `+^map\[(\w[\w\d]*), ?(\w[\w\d]*\??)\]\??$+`
-* set: `+^set\[(\w[\w\d]*\??)\]\??$+`
 
 .Examples
 * `array[boolean]`
@@ -78,13 +78,51 @@ collection and map types must follow one of these patterns:
 
 ==== Enums
 
+===== Plain Enum
+
+A plain enum is an enum that does not wrap any internal values.  The name of the
+enum values _is_ the serialized form.
+
+.Type Definition
 [source, yaml]
 ----
-MyObjectKind:
+MyPlainEnum:
+  type: enum
+  wraps: none
+  values:
+  - EnumValue1
+  - EnumValue2
+----
+
+.Serialized
+[source, json]
+----
+"EnumValue1"
+----
+
+===== Boolean Enum
+
+===== Decimal Enum
+
+===== Integer Enum
+
+===== String Enum
+
+.Type Definition
+[source, yaml]
+----
+MyStringEnum:
+  type: enum
   wraps: string
   values:
-    Kind1: kind-1
-    Kind2: kind-2
+    Value1: value-1
+    Value2: value-2
+----
+
+.Serialized
+[source, json]
+----
+"value-1"
 ----
 
 ==== Objects
