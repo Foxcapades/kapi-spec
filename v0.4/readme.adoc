@@ -59,13 +59,94 @@ collection and map types must follow one of these patterns:
 * boolean
 * date
 * decimal
-* enum
 * integer
 * list
 * map
 * object
 * set
 * string
+
+.Common Properties
+[cols="2m,1m,7"]
+|===
+| Property | Required | Description
+
+| summary
+| false
+| Short summary of the type being referenced or defined.
+
+| description
+| false
+| Long description or help text of the type being referenced or defined and its
+  usage.
+
+| example
+| false
+| A single example value of the type being referenced or defined.
+
+| examples
+| false
+| Array of described example values of the type being referenced or defined.
+|===
+
+==== Array
+
+===== Reference
+
+Shorthand::
+* `array[MyType]`
+* `array[MyType?]`
+* `array[MyType]?`
+* `array[MyType?]?`
+
+Longform::
++
+[source, yaml]
+----
+type: array
+values:
+  type: types.MyType
+  nullable: true
+----
+
+===== Definition
+
+==== Boolean
+
+Shorthand::
+* `boolean`
+* `boolean?`
+
+==== Date
+
+Shorthand::
+* `date`
+* `date?`
+
+==== Decimal
+
+Shorthand::
+* `decimal`
+* `decimal?`
+
+==== Integer
+
+Shorthand::
+* `integer`
+* `integer?`
+
+==== List
+
+Shorthand::
+* `list[MyType]`
+* `list[MyType?]`
+* `list[MyType]?`
+* `list[MyType?]?`
+
+==== Map
+==== Object
+==== Set
+==== String
 
 
 === Using Types
