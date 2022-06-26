@@ -51,10 +51,7 @@ routes:
               value: types.User
   /users/{user-id}:
     uri:
-    - name: user-id
-      value:
-        type: integer
-        format: uint64
+    - uri.UserID
     get:
       responses:
         200:
@@ -66,26 +63,31 @@ routes:
         500: responses.InternalError
 
 components:
+  uri:
+    UserID:
+      name: user-id
+      value: types.UserID
 
   types:
+    UserID:
+      type: integer
+      format: uint64
+
     Username:
       type: string
       minLength: 3
       maxLength: 64
+
     User:
       type: object
       properties:
-        userId:
-          type: integer
-          format: uint64
+        userId: types.UserID
         username: types.Username
-        created:
-          type: date
-          format: datetime-tz
+        created: date
+
     NewUserRequest:
       type: object
       properties:
-        username:
-          type: types.Username
+        username: types.Username
 
 

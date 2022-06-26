@@ -159,12 +159,14 @@ definitions:
   seg-components:
     title: API Component Definitions
     type: object
+    additionalProperties: false
     properties:
       responses:
         type: object
         patternProperties:
           ^\w[\w\d]*$:
             $ref: "#/definitions/response-handle"
+        additionalProperties: false
 
       types:
         type: object
@@ -172,8 +174,13 @@ definitions:
           ^\w[\w\d]*$:
             $ref: "#/definitions/type-definition"
         additionalProperties: false
-    required:
-    - types
+
+      uri:
+        type: object
+        patternProperties:
+          ^\w[\w\d]*$:
+            $ref: "#/definitions/uri-param-def"
+        additionalProperties: false
 
   # endregion KAPI Document Definitions
 
@@ -238,7 +245,7 @@ definitions:
       uri:
         type: array
         items:
-          $ref: "#/definitions/uri-param"
+          $ref: "#/definitions/uri-param-handle"
         minItems: 1
       delete:
         title: Delete Requests
@@ -267,7 +274,23 @@ definitions:
 
   # endregion HTTP Routes
 
-  uri-param:
+  # region URI Params
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   HTTP Methods                                                       | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
+
+  uri-param-handle:
+    oneOf:
+    - $ref: "#/definitions/uri-param-ref"
+    - $ref: "#/definitions/uri-param-def"
+
+  uri-param-ref:
+    type: string
+    pattern: ^uri.\w[\w\d]*$
+
+  uri-param-def:
     title: URI Parameter
     type: object
     properties:
@@ -282,6 +305,8 @@ definitions:
     required:
     - name
     - value
+
+  # endregion URI Params
 
   # region HTTP Methods
   # +----------------------------------------------------------------------+ #
