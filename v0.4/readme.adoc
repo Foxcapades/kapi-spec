@@ -4,6 +4,7 @@
 :toc: preamble
 :toclevels: 4
 :toc-title:
+:icons: font
 
 *Version: {revnumber}*
 
@@ -28,6 +29,11 @@ A YAML or JSON document that is, by design, valid against the
 link:kapi-spec.yml[KAPI JSON Schema Definition].  This document MUST contain the
 defined required keywords, and be one of either an <<API Definition>> or
 <<Library Definition>>.
+
+Template URI::
++
+WARNING: TODO: replace all references to "pattern uri" with "template uri" in the JSON
+schema document.
 
 
 == Active Notes
