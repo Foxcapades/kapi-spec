@@ -51,7 +51,7 @@ routes:
               value: types.User
   /users/{user-id}:
     uri:
-    - uri.UserID
+    - params.UserID
     get:
       summary: Lookup a user by ID.
       responses:
@@ -64,8 +64,9 @@ routes:
         500: responses.InternalError
     patch:
       summary: Update a user by ID.
-      request:
+      request: {
         # TODO
+      }
       responses:
         204:
           summary: User updated successfully.
