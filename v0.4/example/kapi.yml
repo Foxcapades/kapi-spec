@@ -53,11 +53,32 @@ routes:
     uri:
     - uri.UserID
     get:
+      summary: Lookup a user by ID.
       responses:
         200:
           content:
             application/json:
               value: types.User
+        401: responses.Unauthorized
+        404: responses.NotFound
+        500: responses.InternalError
+    patch:
+      summary: Update a user by ID.
+      request:
+        # TODO
+      responses:
+        204:
+          summary: User updated successfully.
+        400: responses.BadRequest
+        401: responses.Unauthorized
+        404: responses.NotFound
+        422: responses.InvalidRequest
+        500: responses.InternalError
+    delete:
+      summary: Delete a user by ID.
+      responses:
+        204:
+          summary: User deleted successfully.
         401: responses.Unauthorized
         404: responses.NotFound
         500: responses.InternalError

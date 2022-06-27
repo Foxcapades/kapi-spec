@@ -612,6 +612,7 @@ definitions:
       ^[1-5]\d\d$:
         $ref: "#/definitions/response-handle"
     minProperties: 1
+    additionalProperties: false
 
   response-mime-map:
     title: Response MimeType Map
@@ -629,6 +630,7 @@ definitions:
       text/plain:               { $ref: "#/definitions/response-content" }
     patternProperties:
       ^[a-z]+/[\w\d\-.+]+$: { $ref: "#/definitions/response-content" }
+    additionalProperties: false
 
   response-handle:
     oneOf:
@@ -647,8 +649,7 @@ definitions:
       description: { type: string }
       headers:     { $ref: "#/definitions/header-map" }
       content:     { $ref: "#/definitions/response-mime-map" }
-    required:
-    - content
+    additionalProperties: false
 
   response-content:
     title: Response Content
@@ -659,6 +660,7 @@ definitions:
       value:       { $ref: "#/definitions/type-reference" }
     required:
     - value
+    additionalProperties: false
 
   # endregion HTTP Responses
 
