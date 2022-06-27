@@ -175,11 +175,28 @@ definitions:
             $ref: "#/definitions/type-definition"
         additionalProperties: false
 
-      uri:
+      params:
+        title: Reusable Parameter Definitions
+        description: |
+          Defines parameter objects that may be reused throughout the API
+          definition.
+          
+          Parameter definitions may be URI and/or query parameters.
+          
+          A single definition may be used as either a URI or query parameter (or
+          both) as the definition of both types is identical.
+          
+          Parameters defined here may choose to or choose not to define a `name`
+          property.  Parameters without a `name` property will use the key under
+          which they were defined as the value of their `name` parameter.
+          
+          For example, defining a parameter with no `name` field under the key
+          `params.Foo` is equivalent to defining that parameter with the `name`
+          field set to `Foo`.
         type: object
         patternProperties:
           ^\w[\w\d]*$:
-            $ref: "#/definitions/uri-param-def"
+            $ref: "#/definitions/parameter-def-block"
         additionalProperties: false
 
   # endregion KAPI Document Definitions
@@ -243,9 +260,12 @@ definitions:
         title: Route Description
         type: string
       uri:
+        title: Template URI Parameter Definitions
+        description: |
+          Required definition of the URI variables defined in the patterned URI.
         type: array
         items:
-          $ref: "#/definitions/uri-param-handle"
+          $ref: "#/definitions/parameter-handle"
         minItems: 1
       delete:
         title: Delete Requests
@@ -280,15 +300,6 @@ definitions:
   # |   HTTP Methods                                                       | #
   # |                                                                      | #
   # +----------------------------------------------------------------------+ #
-
-  uri-param-handle:
-    oneOf:
-    - $ref: "#/definitions/uri-param-ref"
-    - $ref: "#/definitions/uri-param-def"
-
-  uri-param-ref:
-    type: string
-    pattern: ^uri.\w[\w\d]*$
 
   uri-param-def:
     title: URI Parameter
@@ -659,15 +670,7 @@ definitions:
     title: Query Parameters
     type: array
     items:
-      type: object
-      properties:
-        name:        { type: string }
-        summary:     { type: string }
-        description: { type: string }
-        value:       { $ref: "#/definitions/type-reference" }
-      required:
-      - name
-      - value
+      $ref: "#/definitions/parameter-handle"
 
   header-map:
     title: Headers
@@ -683,8 +686,174 @@ definitions:
       - header
       - value
 
-  # endregion KAPI HTTP Definitions
+  # region Parameters
+  # +----------------------------------------------------------------------+ #
+  # |                                                                      | #
+  # |   Parameters (URI & Query)                                           | #
+  # |                                                                      | #
+  # +----------------------------------------------------------------------+ #
 
+  # +----------------------------------------------------------------------+ #
+  # |   Inline Parameter Definition                                        | #
+  # +----------------------------------------------------------------------+ #
+
+  parameter-def-inline:
+    title: Inline Parameter Definition
+    description: |
+      Parameter defined in the parameter listing block for either URI parameters
+      on a route or query parameters on a request.
+      
+      This differs from the parameter block definition in that the `name` field
+      is required here whereas the `name` field is optional in the parameter
+      block definition.
+    type: object
+    properties:
+      name:
+        title: Parameter Name
+        description: |
+          This is the name of the parameter as it appears in the URI template or
+          the request query string.
+          
+          **Examples**
+          
+          Parameterized URI: `/foo/{bar}`
+          
+          For this URI template, to define the parameter for the template
+          variable `{bar}`, the name of the defined parameter MUST be `bar`.
+          
+          
+          URI with query: /foo/bar?fizz=buzz
+          
+          For this URI example, to define the parameter for the query param
+          `fizz`, the name of the defined parameter MUST be `fizz`.
+        type: string
+      summary:
+        title: Parameter Summary
+        description: Short summary describing the parameter.
+        type: string
+      description:
+        title: Parameter Description
+        description: |
+          Long description or help text describing the parameter and its usage.
+        type: string
+      value:
+        title: Parameter Value Type
+        description: Defines the type of data the parameter accepts.
+        $ref: "#/definitions/type-reference"
+    required:
+    - name
+    - value
+    additionalProperties: false
+
+  # +----------------------------------------------------------------------+ #
+  # |   Params Block Parameter Definition                                  | #
+  # +----------------------------------------------------------------------+ #
+
+  parameter-def-block:
+    title: Block Parameter Definition
+    description: |
+      Parameter defined in the `components.params` block of the KAPI document
+      for either URI parameters on a route or query parameters on a request.
+      
+      This differs from the inline parameter definition in that the `name` field
+      is optional here whereas the `name` field is required in the inline
+      definition.
+      
+      The `name` field is optional here as the name, if absent, will be taken
+      from the key under which the parameter was defined in the
+      `components.params` block.
+      
+      For example, given the following definition, the name property of the
+      defined parameter will be `foo`.
+      
+      ```
+      components:
+        params:
+          foo:
+            value: string
+      ```
+    type: object
+    properties:
+      name:
+        title: Parameter Name
+        description: |
+          This is the name of the parameter as it appears in the URI template or
+          the request query string.
+          
+          If this property is absent, the name of the key under which this
+          parameter was defined will be used as the name.
+          
+          **Examples**
+          
+          Parameterized URI: `/foo/{bar}`
+          
+          For this URI template, to define the parameter for the template
+          variable `{bar}`, the name of the defined parameter MUST be `bar`.
+          
+          
+          URI with query: /foo/bar?fizz=buzz
+          
+          For this URI example, to define the parameter for the query param
+          `fizz`, the name of the defined parameter MUST be `fizz`.
+        type: string
+      summary:
+        title: Parameter Summary
+        description: Short summary describing the parameter.
+        type: string
+      description:
+        title: Parameter Description
+        description: |
+          Long description or help text describing the parameter and its usage.
+        type: string
+      value:
+        title: Parameter Value Type
+        description: Defines the type of data the parameter accepts.
+        $ref: "#/definitions/type-reference"
+    required:
+    - value
+    additionalProperties: false
+
+  # +----------------------------------------------------------------------+ #
+  # |   Parameter Referencing                                              | #
+  # +----------------------------------------------------------------------+ #
+
+  parameter-handle:
+    title: Parameter Handle
+    description: Handle on a parameter reference or inline definition.
+    oneOf:
+    - $ref: "#/definitions/parameter-reference"
+    - $ref: "#/definitions/parameter-def-inline"
+
+  parameter-reference:
+    title: Parameter Reference
+    description: |
+      "params" namespaced name of a parameter defined in the `components.params`
+      block of the KAPI document.
+      
+      This name MUST point to an existing parameter definition.
+      
+      For example, to use the reference `params.Foo`, a parameter definition
+      MUST exist at the YAML path `#/components/params/Foo` (or
+      `components.params.Foo`).
+      
+      Example Document Fragment:
+      ```yaml
+      routes:
+        /{foo}:
+          uri:
+            - params.Foo
+      components:
+        params:
+          Foo:
+            name: foo
+            type: string
+      ```
+    type: string
+    pattern: ^params\.\S+$
+
+  # endregion Parameters
+
+  # endregion KAPI HTTP Definitions
 
   # region KAPI Types Schemata
   # +--------------------------------------------------------------------------------------------------------------+ #

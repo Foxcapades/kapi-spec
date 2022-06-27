@@ -63,7 +63,7 @@ routes:
         500: responses.InternalError
 
 components:
-  uri:
+  params:
     UserID:
       name: user-id
       value: types.UserID

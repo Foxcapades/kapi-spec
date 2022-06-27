@@ -113,9 +113,20 @@ values:
 
 ==== Boolean
 
+===== Reference
+
 Shorthand::
 * `boolean`
 * `boolean?`
+
+Longform::
++
+[source, yaml]
+----
+type: boolean
+example: true
+
+----
 
 ==== Date
 
