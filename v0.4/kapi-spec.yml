@@ -851,7 +851,7 @@ definitions:
             type: string
       ```
     type: string
-    pattern: ^params\.\S+$
+    pattern: ^params\.\w[^/#?]+$
 
   # endregion Parameters
 
