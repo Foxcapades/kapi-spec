@@ -12,12 +12,10 @@ KAPI is a YAML or JSON based syntax for defining HTTP-based REST APIs.
 
 == Terms & Definitions
 
-This specification uses the terms/keywords "MUST", "MUST NOT", "SHOULD", "SHOULD
-NOT", "MAY", and "OPTIONAL".  These terms are to be interpreted as described in
-https://www.rfc-editor.org/info/bcp14[BCP-14]
-(https://datatracker.ietf.org/doc/html/rfc2119[RFC2119] and
-https://datatracker.ietf.org/doc/html/rfc8174[RFC8174]) when, and only when,
-they appear in all capital letters as shown in this paragraph.
+This specification uses the terms/keywords "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY", and "OPTIONAL".  These
+terms are to be interpreted as described in https://www.rfc-editor.org/info/bcp14[BCP-14]
+(https://datatracker.ietf.org/doc/html/rfc2119[RFC2119] and https://datatracker.ietf.org/doc/html/rfc8174[RFC8174])
+when, and only when, they appear in all capital letters as shown in this paragraph.
 
 === Definitions
 
@@ -25,15 +23,13 @@ KAPI Specification::
 Refers to this document.
 
 KAPI Document::
-A YAML or JSON document that is, by design, valid against the
-link:kapi-spec.yml[KAPI JSON Schema Definition].  This document MUST contain the
-defined required keywords, and be one of either an <<API Definition>> or
+A YAML or JSON document that is, by design, valid against the link:kapi-spec.yml[KAPI JSON Schema Definition].  This
+document MUST contain the defined required keywords, and be one of either an <<API Definition>> or
 <<Library Definition>>.
 
 Template URI::
 +
-WARNING: TODO: replace all references to "pattern uri" with "template uri" in the JSON
-schema document.
+WARNING: TODO: replace all references to "pattern uri" with "template uri" in the JSON schema document.
 
 
 == Active Notes
